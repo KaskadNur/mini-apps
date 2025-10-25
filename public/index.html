@@ -30,47 +30,19 @@
         }
         
         h1 {
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             font-size: 24px;
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         
-        .hello-btn {
-            background: #0088cc;
-            color: white;
-            border: none;
-            padding: 20px 50px;
-            font-size: 20px;
-            border-radius: 25px;
-            cursor: pointer;
-            margin: 20px 0;
-            transition: all 0.3s ease;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-            font-weight: 600;
-        }
-        
-        .hello-btn:hover {
-            background: #0077b3;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-        }
-        
-        .hello-btn:active {
-            transform: translateY(0);
-        }
-        
-        .response {
-            background: rgba(255, 255, 255, 0.15);
-            padding: 20px;
+        .points-display {
+            background: rgba(255, 215, 0, 0.2);
+            border: 2px solid gold;
+            padding: 15px;
             border-radius: 15px;
-            margin-top: 20px;
+            margin-bottom: 20px;
             font-size: 18px;
-            min-height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            font-weight: bold;
         }
         
         .user-info {
@@ -81,6 +53,75 @@
             font-size: 14px;
         }
         
+        .btn {
+            background: #0088cc;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            font-weight: 600;
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-hello {
+            background: #0088cc;
+        }
+        
+        .btn-ad {
+            background: #ff6b35;
+        }
+        
+        .btn-ad:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .response {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            font-size: 16px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .ad-container {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            display: none;
+        }
+        
+        .ad-placeholder {
+            background: #333;
+            color: #fff;
+            padding: 40px 20px;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+        
         .loading {
             opacity: 0.7;
         }
@@ -88,48 +129,76 @@
 </head>
 <body>
     <div class="app-container">
-        <h1>🚀 Мое Telegram Приложение</h1>
+        <h1>🚀 Рекламное приложение</h1>
+        
+        <div class="points-display" id="pointsDisplay">
+            💰 Загрузка баллов...
+        </div>
         
         <div class="user-info" id="userInfo">
             Загрузка информации...
         </div>
         
-        <button class="hello-btn" onclick="sayHello()">
+        <button class="btn btn-hello" onclick="sayHello()">
             👋 ПРИВЕТ
         </button>
         
+        <button class="btn btn-ad" id="watchAdBtn" onclick="showAd()">
+            📺 Смотреть рекламу (+10 баллов)
+        </button>
+        
+        <div class="ad-container" id="adContainer">
+            <div class="ad-placeholder">
+                🎬 РЕКЛАМА<br>
+                (Здесь будет рекламный баннер)
+            </div>
+            <button class="btn" onclick="completeAd()" style="background: #28a745;">
+                ✅ Завершить просмотр
+            </button>
+            <button class="btn" onclick="cancelAd()" style="background: #dc3545;">
+                ❌ Отмена
+            </button>
+        </div>
+        
         <div class="response" id="response">
-            Нажмите кнопку выше
+            Добро пожаловать! 👆
         </div>
     </div>
 
     <script>
         // Инициализация Telegram Web App
         const tg = window.Telegram.WebApp;
+        let userId = null;
+        let userPoints = 0;
         
         // Инициализируем приложение
         tg.ready();
-        tg.expand(); // Расширяем на весь экран
+        tg.expand();
         
-        // Показываем информацию о пользователе
+        // Получаем информацию о пользователе
         const user = tg.initDataUnsafe.user;
         const userInfoElement = document.getElementById('userInfo');
+        const pointsDisplay = document.getElementById('pointsDisplay');
         
         if (user) {
+            userId = user.id;
             userInfoElement.innerHTML = `
                 👤 Пользователь: ${user.first_name || 'Неизвестно'}<br>
                 📱 ID: ${user.id}
             `;
+            loadUserPoints();
         } else {
             userInfoElement.innerHTML = '👤 Гость (открыто в браузере)';
+            pointsDisplay.innerHTML = '💰 Войдите через Telegram для получения баллов';
         }
         
-        let clickCount = 0;
+        let helloCount = 0;
+        let adInProgress = false;
         
         function sayHello() {
-            clickCount++;
+            helloCount++;
             const responseElement = document.getElementById('response');
-            responseElement.innerHTML = `Привет! 😊<br><small>Нажато: ${clickCount} раз</small>`;
+            responseElement.innerHTML = `Привет! 😊<br><small>Нажато: ${helloCount} раз</small>`;
             
             // Вибрация
             if (tg.HapticFeedback) {
@@ -139,11 +208,114 @@
             // Отправляем данные в бота
             tg.sendData(JSON.stringify({
                 action: 'hello_button_click',
-                count: clickCount,
+                count: helloCount,
                 timestamp: new Date().toISOString(),
-                user_id: user ? user.id : 'unknown'
+                user_id: userId
             }));
         }
+        
+        function showAd() {
+            if (adInProgress) return;
+            
+            adInProgress = true;
+            const adContainer = document.getElementById('adContainer');
+            const watchAdBtn = document.getElementById('watchAdBtn');
+            
+            // Показываем контейнер с рекламой
+            adContainer.style.display = 'block';
+            watchAdBtn.disabled = true;
+            watchAdBtn.textContent = '📺 Реклама воспроизводится...';
+            
+            // Симулируем загрузку рекламы
+            document.getElementById('response').innerHTML = '🎬 Загружаем рекламу...';
+            
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('medium');
+            }
+            
+            // В реальном приложении здесь будет вызов Telegram Ad API
+            console.log('Показ рекламы для пользователя:', userId);
+        }
+        
+        function completeAd() {
+            if (!adInProgress) return;
+            
+            // Награждаем пользователя баллами
+            const pointsEarned = 10;
+            
+            // Отправляем данные о просмотре рекламы
+            tg.sendData(JSON.stringify({
+                action: 'ad_watched',
+                points: pointsEarned,
+                user_id: userId,
+                timestamp: new Date().toISOString()
+            }));
+            
+            // Обновляем интерфейс
+            userPoints += pointsEarned;
+            updatePointsDisplay();
+            
+            document.getElementById('response').innerHTML = 
+                `🎉 +${pointsEarned} баллов за рекламу!<br>Всего: ${userPoints} баллов`;
+            
+            resetAdInterface();
+            
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.notificationOccurred('success');
+            }
+        }
+        
+        function cancelAd() {
+            resetAdInterface();
+            document.getElementById('response').innerHTML = '❌ Просмотр рекламы отменен';
+            
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('heavy');
+            }
+        }
+        
+        function resetAdInterface() {
+            adInProgress = false;
+            const adContainer = document.getElementById('adContainer');
+            const watchAdBtn = document.getElementById('watchAdBtn');
+            
+            adContainer.style.display = 'none';
+            watchAdBtn.disabled = false;
+            watchAdBtn.textContent = '📺 Смотреть рекламу (+10 баллов)';
+        }
+        
+        function loadUserPoints() {
+            if (!userId) return;
+            
+            // В реальном приложении здесь будет запрос к вашему API
+            // fetch(`/api/user/${userId}/points`)
+            //   .then(response => response.json())
+            //   .then(data => {
+            //       userPoints = data.points;
+            //       updatePointsDisplay();
+            //   });
+            
+            // Временная заглушка
+            userPoints = Math.floor(Math.random() * 50);
+            updatePointsDisplay();
+        }
+        
+        function updatePointsDisplay() {
+            pointsDisplay.innerHTML = `💰 Баллы: ${userPoints}`;
+        }
+        
+        // Имитация Telegram Ad API (в реальном приложении используйте официальный API)
+        function initializeAds() {
+            if (window.Telegram && window.Telegram.Ad) {
+                // Официальный API рекламы Telegram
+                console.log('Telegram Ad API доступен');
+            } else {
+                console.log('Используется имитация рекламы');
+            }
+        }
+        
+        // Инициализируем рекламу при загрузке
+        initializeAds();
         
         console.log('Telegram Web App инициализирован');
     </script>
