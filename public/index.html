@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Telegram App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .app-container {
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            color: white;
+        }
+        
+        h1 {
+            margin-bottom: 30px;
+            font-size: 24px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .hello-btn {
+            background: #0088cc;
+            color: white;
+            border: none;
+            padding: 20px 50px;
+            font-size: 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            font-weight: 600;
+        }
+        
+        .hello-btn:hover {
+            background: #0077b3;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .hello-btn:active {
+            transform: translateY(0);
+        }
+        
+        .response {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            font-size: 18px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .user-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <h1>🚀 Мое Telegram Приложение</h1>
+        
+        <div class="user-info" id="userInfo">
+            Загрузка информации...
+        </div>
+        
+        <button class="hello-btn" onclick="sayHello()">
+            👋 ПРИВЕТ
+        </button>
+        
+        <div class="response" id="response">
+            Нажмите кнопку выше
+        </div>
+    </div>
+
+    <script>
+        // Инициализация Telegram Web App
+        const tg = window.Telegram.WebApp;
+        
+        // Инициализируем приложение
+        tg.ready();
+        tg.expand(); // Расширяем на весь экран
+        
+        // Показываем информацию о пользователе
+        const user = tg.initDataUnsafe.user;
+        const userInfoElement = document.getElementById('userInfo');
+        
+        if (user) {
+            userInfoElement.innerHTML = `
+                👤 Пользователь: ${user.first_name || 'Неизвестно'}<br>
+                📱 ID: ${user.id}
+            `;
+        } else {
+            userInfoElement.innerHTML = '👤 Гость';
+        }
+        
+        let clickCount = 0;
+        
+        function sayHello() {
+            clickCount++;
+            const responseElement = document.getElementById('response');
+            responseElement.innerHTML = `Привет! 😊<br><small>Нажато: ${clickCount} раз</small>`;
+            
+            // Вибрация
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('light');
+            }
+            
+            // Отправляем данные в бота
+            tg.sendData(JSON.stringify({
+                action: 'hello_button_click',
+                count: clickCount,
+                timestamp: new Date().toISOString(),
+                user_id: user ? user.id : 'unknown'
+            }));
+            
+            // Закрываем Web App после 3 нажатий (опционально)
+            if (clickCount >= 3) {
+                setTimeout(() => {
+                    tg.close();
+                }, 1000);
+            }
+        }
+        
+        // Обработчик закрытия Web App
+        tg.onEvent('viewportChanged', (data) => {
+            console.log('Viewport changed:', data);
+        });
+    </script>
+</body>
+</html>
