@@ -1009,4 +1009,570 @@
 
         async function loadUserData() {
             try {
-                // В реаль
+                // В реальном приложении здесь будет запрос к API
+                userData = {
+                    userId: userId,
+                    balance: 125,
+                    totalEarned: 145,
+                    referrals: [],
+                    tasksCompleted: 8,
+                    referralCode: 'EARN7X9K',
+                    joinDate: new Date().toISOString(),
+                    inventory: [
+                        { 
+                            id: 1, 
+                            type: 'sticker', 
+                            name: 'Стикерпак Premium', 
+                            rarity: 'rare', 
+                            image: '🎨', 
+                            basePrice: 50 
+                        },
+                        { 
+                            id: 2, 
+                            type: 'boost', 
+                            name: 'Буст x2', 
+                            rarity: 'uncommon', 
+                            image: '💎', 
+                            basePrice: 30 
+                        },
+                        { 
+                            id: 3, 
+                            type: 'avatar', 
+                            name: 'Золотая рамка', 
+                            rarity: 'epic', 
+                            image: '👑', 
+                            basePrice: 100 
+                        }
+                    ]
+                };
+
+                // Загружаем тему
+                const savedTheme = localStorage.getItem('theme');
+                if (savedTheme) {
+                    currentTheme = savedTheme;
+                    document.body.setAttribute('data-theme', currentTheme);
+                    document.getElementById('themeSwitch').checked = currentTheme === 'light';
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки данных пользователя:', error);
+            }
+        }
+
+        async function loadMarketItems() {
+            try {
+                // В реальном приложении здесь будет запрос к API
+                marketItems = [
+                    {
+                        id: 1001,
+                        item: { 
+                            id: 1001, 
+                            type: 'sticker', 
+                            name: 'Стикерпак "Galaxy"', 
+                            rarity: 'epic', 
+                            image: '🌌', 
+                            basePrice: 80 
+                        },
+                        sellerId: 'test_user_1',
+                        sellerName: 'GalaxyTrader',
+                        price: 75,
+                        createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+                        sold: false
+                    },
+                    {
+                        id: 1002,
+                        item: { 
+                            id: 1002, 
+                            type: 'avatar', 
+                            name: 'Анимационная рамка', 
+                            rarity: 'rare', 
+                            image: '✨', 
+                            basePrice: 120 
+                        },
+                        sellerId: 'test_user_2',
+                        sellerName: 'FrameMaster',
+                        price: 110,
+                        createdAt: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
+                        sold: false
+                    },
+                    {
+                        id: 1003,
+                        item: { 
+                            id: 1003, 
+                            type: 'boost', 
+                            name: 'Буст x3 на 48ч', 
+                            rarity: 'legendary', 
+                            image: '🚀', 
+                            basePrice: 150 
+                        },
+                        sellerId: 'test_user_3',
+                        sellerName: 'BoostSeller',
+                        price: 140,
+                        createdAt: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
+                        sold: false
+                    }
+                ];
+                
+                updateMarketDisplay();
+            } catch (error) {
+                console.error('Ошибка загрузки маркета:', error);
+            }
+        }
+
+        function initializeInventory() {
+            const grid = document.getElementById('inventoryGrid');
+            grid.innerHTML = '';
+            
+            for (let i = 0; i < 25; i++) {
+                const slot = document.createElement('div');
+                slot.className = 'inventory-slot';
+                slot.onclick = () => handleItemClick(i);
+                
+                const item = userData.inventory[i];
+                if (item) {
+                    slot.classList.add('filled');
+                    slot.innerHTML = `
+                        <div class="item-image">${item.image}</div>
+                        <div class="item-rarity ${item.rarity}">●</div>
+                    `;
+                }
+                
+                grid.appendChild(slot);
+            }
+            
+            document.getElementById('slotsUsed').textContent = userData.inventory.length;
+        }
+
+        function handleItemClick(slotIndex) {
+            const item = userData.inventory[slotIndex];
+            if (item) {
+                selectedItemIndex = slotIndex;
+                openSellModal(item);
+            }
+        }
+
+        function openSellModal(item) {
+            const modal = document.getElementById('sellModal');
+            const itemInfo = document.getElementById('sellItemInfo');
+            const quickSellPrice = Math.floor(item.basePrice * 0.8);
+
+            itemInfo.innerHTML = `
+                <div style="font-size: 40px; margin-bottom: 10px;">${item.image}</div>
+                <div style="font-weight: bold; font-size: 18px;">${item.name}</div>
+                <div style="font-size: 14px; opacity: 0.8;">${getRarityName(item.rarity)}</div>
+            `;
+            
+            document.getElementById('quickSellPrice').textContent = quickSellPrice;
+            modal.style.display = 'block';
+        }
+
+        function closeSellModal() {
+            document.getElementById('sellModal').style.display = 'none';
+            selectedItemIndex = null;
+        }
+
+        function showMarketSell() {
+            closeSellModal();
+            const item = userData.inventory[selectedItemIndex];
+            const modal = document.getElementById('marketSellModal');
+            const itemInfo = document.getElementById('marketItemInfo');
+            
+            itemInfo.innerHTML = `
+                <div style="font-size: 40px; margin-bottom: 10px;">${item.image}</div>
+                <div style="font-weight: bold; font-size: 18px;">${item.name}</div>
+                <div style="font-size: 14px; opacity: 0.8;">${getRarityName(item.rarity)}</div>
+            `;
+            
+            document.getElementById('itemPrice').value = item.basePrice;
+            modal.style.display = 'block';
+        }
+
+        function closeMarketSellModal() {
+            document.getElementById('marketSellModal').style.display = 'none';
+            selectedItemIndex = null;
+        }
+
+        function quickSell() {
+            const item = userData.inventory[selectedItemIndex];
+            const sellPrice = Math.floor(item.basePrice * 0.8);
+
+            // Удаляем предмет из инвентаря
+            userData.inventory.splice(selectedItemIndex, 1);
+            userData.balance += sellPrice;
+            
+            // Обновляем интерфейс
+            initializeInventory();
+            updateDisplay();
+            closeSellModal();
+            
+            showNotification(`💰 Предмет продан за ${sellPrice} ⭐`);
+            
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.notificationOccurred('success');
+            }
+        }
+
+        function listOnMarket() {
+            const price = parseInt(document.getElementById('itemPrice').value);
+            const item = userData.inventory[selectedItemIndex];
+            
+            if (!price || price < 1) {
+                showNotification('❌ Введите корректную цену');
+                return;
+            }
+            
+            // Добавляем предмет на маркет
+            marketItems.push({
+                id: Date.now(),
+                item: item,
+                sellerId: userId,
+                sellerName: user.first_name || 'User',
+                price: price,
+                createdAt: new Date().toISOString(),
+                sold: false
+            });
+            
+            // Удаляем предмет из инвентаря
+            userData.inventory.splice(selectedItemIndex, 1);
+            
+            // Обновляем интерфейс
+            initializeInventory();
+            updateMarketDisplay();
+            closeMarketSellModal();
+            
+            showNotification(`🏪 Предмет выставлен на маркет за ${price} ⭐`);
+            
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.notificationOccurred('success');
+            }
+        }
+
+        function updateMarketDisplay() {
+            const marketItemsList = document.getElementById('marketItemsList');
+            const filteredItems = filterMarketItems(marketItems);
+            
+            if (filteredItems.length === 0) {
+                marketItemsList.innerHTML = `
+                    <div style="text-align: center; padding: 40px 20px; opacity: 0.7;">
+                        <div style="font-size: 48px; margin-bottom: 10px;">🛒</div>
+                        <div>Пока нет товаров на маркете</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            marketItemsList.innerHTML = filteredItems.map(item => `
+                <div class="market-item">
+                    <div class="market-item-image">${item.item.image}</div>
+                    <div class="market-item-info">
+                        <div class="market-item-name">${item.item.name}</div>
+                        <div class="market-item-seller">Продавец: ${item.sellerName}</div>
+                        <div class="time-ago">${getTimeAgo(item.createdAt)}</div>
+                        <div class="item-actions">
+                            <button class="action-btn" style="background: #667eea; color: white;" 
+                                    onclick="showItemDetails(${item.id})">
+                                ℹ️ Подробнее
+                            </button>
+                            <button class="action-btn" style="background: #28a745; color: white;" 
+                                    onclick="openBuyModal(${item.id})"
+                                    ${userData.balance < item.price ? 'disabled' : ''}>
+                                🛒 ${item.price} ⭐
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('marketBalance').textContent = userData.balance;
+        }
+
+        function filterMarketItems(items) {
+            const availableItems = items.filter(item => !item.sold);
+            
+            switch(currentMarketFilter) {
+                case 'sticker':
+                    return availableItems.filter(item => item.item.type === 'sticker');
+                case 'avatar':
+                    return availableItems.filter(item => item.item.type === 'avatar');
+                case 'boost':
+                    return availableItems.filter(item => item.item.type === 'boost');
+                case 'cheap':
+                    return availableItems.filter(item => item.price <= 50).sort((a, b) => a.price - b.price);
+                case 'expensive':
+                    return availableItems.filter(item => item.price >= 100).sort((a, b) => b.price - a.price);
+                default:
+                    return availableItems;
+            }
+        }
+
+        function setMarketFilter(filter) {
+            currentMarketFilter = filter;
+            
+            // Обновляем активные кнопки фильтров
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            updateMarketDisplay();
+        }
+
+        function openBuyModal(marketItemId) {
+            selectedMarketItem = marketItems.find(item => item.id === marketItemId);
+            if (!selectedMarketItem) return;
+            
+            const modal = document.getElementById('buyModal');
+            const itemInfo = document.getElementById('buyItemInfo');
+            const commission = Math.floor(selectedMarketItem.price * 0.05);
+            const total = selectedMarketItem.price;
+            
+            itemInfo.innerHTML = `
+                <div style="font-size: 40px; margin-bottom: 10px;">${selectedMarketItem.item.image}</div>
+                <div style="font-weight: bold; font-size: 18px;">${selectedMarketItem.item.name}</div>
+                <div style="font-size: 14px; opacity: 0.8;">${getRarityName(selectedMarketItem.item.rarity)}</div>
+                <div style="font-size: 12px; margin-top: 5px;">От: ${selectedMarketItem.sellerName}</div>
+            `;
+            
+            document.getElementById('buyPrice').textContent = selectedMarketItem.price + ' ⭐';
+            document.getElementById('buyCommission').textContent = commission + ' ⭐';
+            document.getElementById('buyerBalance').textContent = userData.balance + ' ⭐';
+            document.getElementById('buyTotal').textContent = total + ' ⭐';
+            
+            const confirmBtn = document.getElementById('confirmBuyBtn');
+            if (userData.balance < total) {
+                confirmBtn.disabled = true;
+                confirmBtn.innerHTML = '❌ Недостаточно звезд';
+            } else {
+                confirmBtn.disabled = false;
+                confirmBtn.innerHTML = '✅ Купить сейчас';
+            }
+            
+            modal.style.display = 'block';
+        }
+
+        function closeBuyModal() {
+            document.getElementById('buyModal').style.display = 'none';
+            selectedMarketItem = null;
+        }
+
+        async function confirmPurchase() {
+            if (!selectedMarketItem || userData.balance < selectedMarketItem.price) {
+                showNotification('❌ Недостаточно средств для покупки');
+                return;
+            }
+            
+            try {
+                // Имитация успешной покупки
+                const result = {
+                    success: true,
+                    item: selectedMarketItem.item,
+                    price: selectedMarketItem.price,
+                    commission: Math.floor(selectedMarketItem.price * 0.05)
+                };
+                
+                if (result.success) {
+                    // Обновляем баланс
+                    userData.balance -= selectedMarketItem.price;
+                    userData.inventory.push(result.item);
+                    
+                    // Помечаем предмет как проданный
+                    selectedMarketItem.sold = true;
+                    
+                    // Обновляем интерфейс
+                    updateDisplay();
+                    initializeInventory();
+                    updateMarketDisplay();
+                    closeBuyModal();
+                    
+                    showNotification(`🎉 Поздравляем! Вы купили "${result.item.name}" за ${result.price} ⭐`);
+                    
+                    if (tg.HapticFeedback) {
+                        tg.HapticFeedback.notificationOccurred('success');
+                    }
+                }
+            } catch (error) {
+                console.error('Ошибка покупки:', error);
+                showNotification('❌ Ошибка при покупке предмета');
+            }
+        }
+
+        function getRarityName(rarity) {
+            const names = {
+                'common': 'Обычный',
+                'uncommon': 'Необычный', 
+                'rare': 'Редкий',
+                'epic': 'Эпический',
+                'legendary': 'Легендарный',
+                'immortal': 'Бессмертный'
+            };
+            return names[rarity] || rarity;
+        }
+
+        function getTimeAgo(timestamp) {
+            const now = new Date();
+            const time = new Date(timestamp);
+            const diff = now - time;
+            
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+            
+            if (days > 0) return `${days} д. назад`;
+            if (hours > 0) return `${hours} ч. назад`;
+            if (minutes > 0) return `${minutes} мин. назад`;
+            return 'только что';
+        }
+
+        function showItemDetails(marketItemId) {
+            const item = marketItems.find(item => item.id === marketItemId);
+            if (!item) return;
+            
+            showNotification(`ℹ️ ${item.item.name} - ${getRarityName(item.item.rarity)} - ${item.price} ⭐`);
+        }
+
+        function updateDisplay() {
+            // Обновляем баланс звезд
+            document.getElementById('starsBalance').textContent = userData.balance;
+            document.getElementById('totalEarned').textContent = userData.totalEarned;
+            document.getElementById('marketBalance').textContent = userData.balance;
+            
+            // Обновляем профиль
+            document.getElementById('profileBalance').textContent = userData.balance;
+            document.getElementById('tasksCompleted').textContent = userData.tasksCompleted;
+            document.getElementById('daysActive').textContent = Math.ceil((new Date() - new Date(userData.joinDate)) / (1000 * 60 * 60 * 24));
+            document.getElementById('referralsCount').textContent = userData.referrals.length;
+            
+            // Обновляем вкладку друзей
+            document.getElementById('friendsCount').textContent = userData.referrals.length;
+            document.getElementById('friendsEarnings').textContent = Math.round(userData.totalEarned * 0.3) + ' ⭐';
+            document.getElementById('yourBonus').textContent = Math.round(userData.totalEarned * 0.3 * 0.02) + ' ⭐';
+            document.getElementById('referralCode').textContent = userData.referralCode;
+            
+            // Обновляем информацию профиля
+            if (user) {
+                document.getElementById('profileInfo').innerHTML = `
+                    <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                        <div style="width: 50px; height: 50px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-right: 15px;">
+                            👤
+                        </div>
+                        <div>
+                            <div style="font-weight: bold; font-size: 18px;">${user.first_name || 'Пользователь'}</div>
+                            <div style="font-size: 12px; opacity: 0.8;">ID: ${user.id}</div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function switchTab(tabName) {
+            // Скрываем все вкладки
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Убираем активный класс у всех кнопок
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Показываем выбранную вкладку
+            document.getElementById('tab-' + tabName).classList.add('active');
+            
+            // Активируем кнопку
+            event.currentTarget.classList.add('active');
+            
+            // Обновляем заголовок
+            const titles = {
+                'earn': 'Заработок',
+                'profile': 'Профиль', 
+                'market': 'Маркет',
+                'friends': 'Друзья',
+                'withdraw': 'Вывести'
+            };
+            document.getElementById('currentTabTitle').textContent = titles[tabName];
+        }
+        
+        function toggleTheme() {
+            currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.body.setAttribute('data-theme', currentTheme);
+            localStorage.setItem('theme', currentTheme);
+        }
+        
+        function completeTask(type) {
+            let reward = 0;
+            let message = '';
+            
+            switch(type) {
+                case 'ad':
+                    reward = 10;
+                    message = '📺 Реклама просмотрена!';
+                    break;
+                case 'game':
+                    reward = 5;
+                    message = '🎮 Игра завершена!';
+                    break;
+                case 'survey':
+                    reward = 15;
+                    message = '📱 Опрос пройден!';
+                    break;
+            }
+            
+            userData.balance += reward;
+            userData.totalEarned += reward;
+            userData.tasksCompleted += 1;
+            
+            updateDisplay();
+            showNotification(message + ' +' + reward + ' ⭐');
+            
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('light');
+            }
+        }
+        
+        function copyReferralLink() {
+            const botUsername = 'your_bot_username';
+            const referralLink = `https://t.me/${botUsername}?start=${userData.referralCode}`;
+            
+            navigator.clipboard.writeText(referralLink).then(() => {
+                showNotification('📋 Ссылка скопирована!');
+            }).catch(() => {
+                const tempInput = document.createElement('input');
+                tempInput.value = referralLink;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempInput);
+                showNotification('📋 Ссылка скопирована!');
+            });
+            
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('light');
+            }
+        }
+        
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(0, 0, 0, 0.8);
+                color: white;
+                padding: 15px 20px;
+                border-radius: 10px;
+                z-index: 1000;
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 2000);
+        }
+        
+        console.log('EarnApp с полноценной торговой системой инициализирован');
+    </script>
+</body>
+</html>
