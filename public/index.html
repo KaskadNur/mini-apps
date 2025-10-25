@@ -80,6 +80,10 @@
             margin-bottom: 20px;
             font-size: 14px;
         }
+        
+        .loading {
+            opacity: 0.7;
+        }
     </style>
 </head>
 <body>
@@ -117,7 +121,7 @@
                 📱 ID: ${user.id}
             `;
         } else {
-            userInfoElement.innerHTML = '👤 Гость';
+            userInfoElement.innerHTML = '👤 Гость (открыто в браузере)';
         }
         
         let clickCount = 0;
@@ -139,19 +143,9 @@
                 timestamp: new Date().toISOString(),
                 user_id: user ? user.id : 'unknown'
             }));
-            
-            // Закрываем Web App после 3 нажатий (опционально)
-            if (clickCount >= 3) {
-                setTimeout(() => {
-                    tg.close();
-                }, 1000);
-            }
         }
         
-        // Обработчик закрытия Web App
-        tg.onEvent('viewportChanged', (data) => {
-            console.log('Viewport changed:', data);
-        });
+        console.log('Telegram Web App инициализирован');
     </script>
 </body>
 </html>
