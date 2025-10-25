@@ -12,12 +12,27 @@
             box-sizing: border-box;
         }
         
+        :root {
+            --bg-primary: linear-gradient(135deg, #667eea, #764ba2);
+            --card-bg: rgba(255, 255, 255, 0.15);
+            --text-color: white;
+            --border-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        [data-theme="light"] {
+            --bg-primary: linear-gradient(135deg, #74b9ff, #0984e3);
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --text-color: #2d3436;
+            --border-color: rgba(0, 0, 0, 0.1);
+        }
+        
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
+            background: var(--bg-primary);
+            color: var(--text-color);
             min-height: 100vh;
             padding-bottom: 70px;
+            transition: all 0.3s ease;
         }
         
         .container {
@@ -53,7 +68,7 @@
             backdrop-filter: blur(20px);
             display: flex;
             padding: 10px 0;
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            border-top: 1px solid var(--border-color);
         }
         
         .tab-button {
@@ -95,12 +110,12 @@
         
         /* Карточки */
         .card {
-            background: rgba(255, 255, 255, 0.15);
+            background: var(--card-bg);
             backdrop-filter: blur(10px);
             border-radius: 15px;
             padding: 20px;
             margin-bottom: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid var(--border-color);
         }
         
         .balance-card {
@@ -147,10 +162,96 @@
         
         .btn-secondary {
             background: rgba(255, 255, 255, 0.2);
+            color: var(--text-color);
         }
         
         .btn-success {
             background: linear-gradient(135deg, #28a745, #20c997);
+        }
+        
+        /* Инвентарь в стиле Steam */
+        .inventory-container {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .inventory-slot {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #3a3a3a, #2a2a2a);
+            border: 2px solid #4a4a4a;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .inventory-slot:hover {
+            border-color: #666;
+            transform: scale(1.05);
+        }
+        
+        .inventory-slot.filled {
+            background: linear-gradient(135deg, #4a4a4a, #3a3a3a);
+            border-color: #666;
+        }
+        
+        .item-image {
+            width: 80%;
+            height: 80%;
+            object-fit: contain;
+        }
+        
+        .item-rarity {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            font-size: 10px;
+        }
+        
+        .item-rarity.common { color: #b0c3d9; }
+        .item-rarity.uncommon { color: #5e98d9; }
+        .item-rarity.rare { color: #4b69ff; }
+        .item-rarity.epic { color: #8847ff; }
+        .item-rarity.legendary { color: #d32ce6; }
+        .item-rarity.immortal { color: #eb4b4b; }
+        
+        .inventory-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        /* Звезды баланс */
+        .stars-balance {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .stars-icon {
+            font-size: 24px;
+            color: gold;
+        }
+        
+        .stars-amount {
+            font-size: 28px;
+            font-weight: bold;
+            color: gold;
         }
         
         /* Список */
@@ -255,6 +356,62 @@
             font-size: 12px;
             opacity: 0.8;
         }
+        
+        /* Переключатель темы */
+        .theme-switcher {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+        
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: #667eea;
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
     </style>
 </head>
 <body>
@@ -267,9 +424,11 @@
         <!-- Вкладка Заработок -->
         <div id="tab-earn" class="tab-content active">
             <div class="card balance-card">
-                <div class="balance-label">Ваш баланс</div>
-                <div class="balance-amount" id="balanceAmount">0 ₽</div>
-                <div class="balance-label">Всего заработано: <span id="totalEarned">0 ₽</span></div>
+                <div class="stars-balance">
+                    <div class="stars-icon">⭐</div>
+                    <div class="stars-amount" id="starsBalance">125</div>
+                </div>
+                <div class="balance-label">Всего заработано: <span id="totalEarned">145</span> ⭐</div>
             </div>
             
             <div class="card">
@@ -279,9 +438,9 @@
                     <div class="feature-icon">📺</div>
                     <div class="feature-text">
                         <div class="feature-title">Просмотр рекламы</div>
-                        <div class="feature-desc">Смотрите видео и получайте деньги</div>
+                        <div class="feature-desc">Смотрите видео и получайте звезды</div>
                     </div>
-                    <button class="btn" style="padding: 8px 15px; font-size: 14px;">+10 ₽</button>
+                    <button class="btn" style="padding: 8px 15px; font-size: 14px;">+10 ⭐</button>
                 </div>
                 
                 <div class="feature-item">
@@ -290,7 +449,7 @@
                         <div class="feature-title">Мини-игры</div>
                         <div class="feature-desc">Играйте и зарабатывайте</div>
                     </div>
-                    <button class="btn" style="padding: 8px 15px; font-size: 14px;">+5 ₽</button>
+                    <button class="btn" style="padding: 8px 15px; font-size: 14px;">+5 ⭐</button>
                 </div>
                 
                 <div class="feature-item">
@@ -299,17 +458,17 @@
                         <div class="feature-title">Опросы</div>
                         <div class="feature-desc">Проходите опросы за вознаграждение</div>
                     </div>
-                    <button class="btn" style="padding: 8px 15px; font-size: 14px;">+15 ₽</button>
+                    <button class="btn" style="padding: 8px 15px; font-size: 14px;">+15 ⭐</button>
                 </div>
             </div>
             
             <div class="card">
                 <h3 style="margin-bottom: 15px;">🚀 Быстрый заработок</h3>
                 <button class="btn btn-success" onclick="completeTask('ad')">
-                    📺 Смотреть рекламу (+10 ₽)
+                    📺 Смотреть рекламу (+10 ⭐)
                 </button>
                 <button class="btn" onclick="completeTask('game')">
-                    🎮 Сыграть в игру (+5 ₽)
+                    🎮 Сыграть в игру (+5 ⭐)
                 </button>
             </div>
         </div>
@@ -327,19 +486,19 @@
                 <h3 style="margin-bottom: 15px;">📊 Статистика</h3>
                 <div class="stats-grid">
                     <div class="stat-item">
-                        <div class="stat-value" id="profileBalance">0</div>
-                        <div class="stat-label">Баланс</div>
+                        <div class="stat-value" id="profileBalance">125</div>
+                        <div class="stat-label">Звезды</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value" id="tasksCompleted">0</div>
+                        <div class="stat-value" id="tasksCompleted">8</div>
                         <div class="stat-label">Заданий</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value" id="daysActive">1</div>
+                        <div class="stat-value" id="daysActive">7</div>
                         <div class="stat-label">Дней</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value" id="referralsCount">0</div>
+                        <div class="stat-value" id="referralsCount">3</div>
                         <div class="stat-label">Друзей</div>
                     </div>
                 </div>
@@ -347,9 +506,70 @@
             
             <div class="card">
                 <h3 style="margin-bottom: 15px;">⚙️ Настройки</h3>
+                
+                <div class="theme-switcher">
+                    <span>🌙 Тёмная тема</span>
+                    <label class="switch">
+                        <input type="checkbox" id="themeSwitch" onchange="toggleTheme()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                
                 <button class="btn btn-secondary">🔔 Уведомления</button>
-                <button class="btn btn-secondary">🌐 Язык</button>
                 <button class="btn btn-secondary">🆘 Поддержка</button>
+            </div>
+        </div>
+        
+        <!-- Вкладка Маркет -->
+        <div id="tab-market" class="tab-content">
+            <div class="card">
+                <h3 style="text-align: center; margin-bottom: 15px;">🛍️ Ваш инвентарь</h3>
+                
+                <div class="stars-balance">
+                    <div class="stars-icon">⭐</div>
+                    <div class="stars-amount">125</div>
+                </div>
+                
+                <div class="inventory-container">
+                    <div class="inventory-grid" id="inventoryGrid">
+                        <!-- Слоты инвентаря будут генерироваться через JS -->
+                    </div>
+                    <div class="inventory-stats">
+                        <span>Слотов: 25</span>
+                        <span>Занято: <span id="slotsUsed">3</span></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 style="margin-bottom: 15px;">🎁 Доступные подарки</h3>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">🎨</div>
+                    <div class="feature-text">
+                        <div class="feature-title">Стикерпак "Premium"</div>
+                        <div class="feature-desc">Эксклюзивные стикеры для Telegram</div>
+                    </div>
+                    <button class="btn" style="padding: 8px 15px; font-size: 14px;">50 ⭐</button>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">👤</div>
+                    <div class="feature-text">
+                        <div class="feature-title">Аватарка "Golden"</div>
+                        <div class="feature-desc">Золотая рамка для профиля</div>
+                    </div>
+                    <button class="btn" style="padding: 8px 15px; font-size: 14px;">100 ⭐</button>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">💎</div>
+                    <div class="feature-text">
+                        <div class="feature-title">Буст заработка</div>
+                        <div class="feature-desc">+20% к заработку на 24 часа</div>
+                    </div>
+                    <button class="btn" style="padding: 8px 15px; font-size: 14px;">75 ⭐</button>
+                </div>
             </div>
         </div>
         
@@ -363,15 +583,15 @@
                 
                 <div class="referral-stats">
                     <div class="referral-stat">
-                        <div class="referral-number" id="friendsCount">0</div>
+                        <div class="referral-number" id="friendsCount">3</div>
                         <div class="referral-text">Друзей</div>
                     </div>
                     <div class="referral-stat">
-                        <div class="referral-number" id="friendsEarnings">0 ₽</div>
+                        <div class="referral-number" id="friendsEarnings">44 ⭐</div>
                         <div class="referral-text">Заработано</div>
                     </div>
                     <div class="referral-stat">
-                        <div class="referral-number" id="yourBonus">0 ₽</div>
+                        <div class="referral-number" id="yourBonus">1 ⭐</div>
                         <div class="referral-text">Ваш бонус</div>
                     </div>
                 </div>
@@ -380,7 +600,7 @@
             <div class="card">
                 <h3 style="margin-bottom: 15px;">📝 Ваша реферальная ссылка</h3>
                 <div class="referral-code" id="referralCode">
-                    Загрузка...
+                    EARN7X9K
                 </div>
                 <button class="btn btn-success" onclick="copyReferralLink()">
                     📋 Скопировать ссылку
@@ -400,7 +620,7 @@
                     <div class="feature-icon">2️⃣</div>
                     <div class="feature-text">
                         <div class="feature-title">Друг начинает зарабатывать</div>
-                        <div class="feature-desc">Он выполняет задания и получает деньги</div>
+                        <div class="feature-desc">Он выполняет задания и получает звезды</div>
                     </div>
                 </div>
                 <div class="feature-item">
@@ -417,7 +637,10 @@
         <div id="tab-withdraw" class="tab-content">
             <div class="card">
                 <h3 style="margin-bottom: 15px; text-align: center;">💳 Вывод средств</h3>
-                <div class="balance-amount" style="font-size: 32px;" id="withdrawBalance">0 ₽</div>
+                <div class="stars-balance">
+                    <div class="stars-icon">⭐</div>
+                    <div class="stars-amount">125</div>
+                </div>
                 <div style="text-align: center; opacity: 0.8; margin-bottom: 20px;">
                     Доступно для вывода
                 </div>
@@ -459,7 +682,7 @@
             <div class="card">
                 <h3 style="margin-bottom: 15px;">💰 Минимальная сумма</h3>
                 <div style="text-align: center; padding: 15px; background: rgba(255, 215, 0, 0.2); border-radius: 10px;">
-                    <div style="font-size: 18px; font-weight: bold; color: gold;">50 ₽</div>
+                    <div style="font-size: 18px; font-weight: bold; color: gold;">50 ⭐</div>
                     <div style="font-size: 12px; opacity: 0.8;">Минимальная сумма для вывода</div>
                 </div>
             </div>
@@ -476,6 +699,10 @@
             <i>👤</i>
             Профиль
         </button>
+        <button class="tab-button" onclick="switchTab('market')">
+            <i>🛍️</i>
+            Маркет
+        </button>
         <button class="tab-button" onclick="switchTab('friends')">
             <i>👥</i>
             Друзья
@@ -490,11 +717,21 @@
         // Инициализация Telegram Web App
         const tg = window.Telegram.WebApp;
         let userId = null;
+        let currentTheme = 'dark';
+        
+        // Данные пользователя
         let userData = {
-            balance: 0,
-            totalEarned: 0,
-            referrals: [],
-            tasksCompleted: 0
+            balance: 125,
+            totalEarned: 145,
+            referrals: ['user123', 'user456', 'user789'],
+            tasksCompleted: 8,
+            referralCode: 'EARN7X9K',
+            joinDate: new Date().toISOString(),
+            inventory: [
+                { id: 1, type: 'sticker', name: 'Стикерпак Premium', rarity: 'rare', image: '🎨' },
+                { id: 2, type: 'boost', name: 'Буст x2', rarity: 'uncommon', image: '💎' },
+                { id: 3, type: 'avatar', name: 'Золотая рамка', rarity: 'epic', image: '👑' }
+            ]
         };
         
         // Инициализируем приложение
@@ -509,45 +746,72 @@
         }
         
         function initializeUser() {
-            // Загружаем данные пользователя
             loadUserData();
+            initializeInventory();
             updateDisplay();
         }
         
         function loadUserData() {
-            // В реальном приложении здесь будет запрос к API
-            // fetch(`/api/user/${userId}`)
+            // Загружаем тему из localStorage
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                currentTheme = savedTheme;
+                document.body.setAttribute('data-theme', currentTheme);
+                document.getElementById('themeSwitch').checked = currentTheme === 'light';
+            }
+        }
+        
+        function initializeInventory() {
+            const grid = document.getElementById('inventoryGrid');
+            grid.innerHTML = '';
             
-            // Временные данные для демонстрации
-            userData = {
-                balance: 45,
-                totalEarned: 145,
-                referrals: ['user123', 'user456', 'user789'],
-                tasksCompleted: 8,
-                referralCode: 'EARN' + Math.random().toString(36).substring(2, 6).toUpperCase(),
-                joinDate: new Date().toISOString()
+            // Создаем 25 слотов инвентаря
+            for (let i = 0; i < 25; i++) {
+                const slot = document.createElement('div');
+                slot.className = 'inventory-slot';
+                slot.onclick = () => showItemInfo(i);
+                
+                // Заполняем слоты предметами
+                const item = userData.inventory[i];
+                if (item) {
+                    slot.classList.add('filled');
+                    slot.innerHTML = `
+                        <div class="item-image">${item.image}</div>
+                        <div class="item-rarity ${item.rarity}">●</div>
+                    `;
+                }
+                
+                grid.appendChild(slot);
+            }
+            
+            document.getElementById('slotsUsed').textContent = userData.inventory.length;
+        }
+        
+        function showItemInfo(slotIndex) {
+            const item = userData.inventory[slotIndex];
+            if (item) {
+                showNotification(`🎁 ${item.name} (${getRarityName(item.rarity)})`);
+            }
+        }
+        
+        function getRarityName(rarity) {
+            const names = {
+                'common': 'Обычный',
+                'uncommon': 'Необычный', 
+                'rare': 'Редкий',
+                'epic': 'Эпический',
+                'legendary': 'Легендарный',
+                'immortal': 'Бессмертный'
             };
+            return names[rarity] || rarity;
         }
         
         function updateDisplay() {
-            // Обновляем баланс
-            document.getElementById('balanceAmount').textContent = userData.balance + ' ₽';
-            document.getElementById('totalEarned').textContent = userData.totalEarned + ' ₽';
-            document.getElementById('withdrawBalance').textContent = userData.balance + ' ₽';
+            // Обновляем баланс звезд
+            document.getElementById('starsBalance').textContent = userData.balance;
+            document.getElementById('totalEarned').textContent = userData.totalEarned;
             
             // Обновляем профиль
-            document.getElementById('profileBalance').textContent = userData.balance;
-            document.getElementById('tasksCompleted').textContent = userData.tasksCompleted;
-            document.getElementById('daysActive').textContent = Math.ceil((new Date() - new Date(userData.joinDate)) / (1000 * 60 * 60 * 24));
-            document.getElementById('referralsCount').textContent = userData.referrals.length;
-            
-            // Обновляем вкладку друзей
-            document.getElementById('friendsCount').textContent = userData.referrals.length;
-            document.getElementById('friendsEarnings').textContent = Math.round(userData.totalEarned * 0.3) + ' ₽';
-            document.getElementById('yourBonus').textContent = Math.round(userData.totalEarned * 0.3 * 0.02) + ' ₽';
-            document.getElementById('referralCode').textContent = userData.referralCode;
-            
-            // Обновляем информацию профиля
             if (user) {
                 document.getElementById('profileInfo').innerHTML = `
                     <div style="display: flex; align-items: center; margin-bottom: 15px;">
@@ -583,11 +847,18 @@
             // Обновляем заголовок
             const titles = {
                 'earn': 'Заработок',
-                'profile': 'Профиль',
+                'profile': 'Профиль', 
+                'market': 'Маркет',
                 'friends': 'Друзья',
                 'withdraw': 'Вывести'
             };
             document.getElementById('currentTabTitle').textContent = titles[tabName];
+        }
+        
+        function toggleTheme() {
+            currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.body.setAttribute('data-theme', currentTheme);
+            localStorage.setItem('theme', currentTheme);
         }
         
         function completeTask(type) {
@@ -614,31 +885,22 @@
             updateDisplay();
             
             // Показываем уведомление
-            showNotification(message + ' +' + reward + ' ₽');
+            showNotification(message + ' +' + reward + ' ⭐');
             
             // Вибрация
             if (tg.HapticFeedback) {
                 tg.HapticFeedback.impactOccurred('light');
             }
-            
-            // Отправляем данные на сервер
-            tg.sendData(JSON.stringify({
-                action: 'task_completed',
-                type: type,
-                reward: reward,
-                user_id: userId,
-                balance: userData.balance
-            }));
         }
         
         function copyReferralLink() {
-            const referralLink = `https://t.me/your_bot_username?start=${userData.referralCode}`;
+            // Правильная реферальная ссылка для Telegram бота
+            const botUsername = 'your_bot_username'; // Замените на username вашего бота
+            const referralLink = `https://t.me/${botUsername}?start=${userData.referralCode}`;
             
-            // В реальном приложении используем Clipboard API
             navigator.clipboard.writeText(referralLink).then(() => {
                 showNotification('📋 Ссылка скопирована!');
             }).catch(() => {
-                // Fallback для старых браузеров
                 const tempInput = document.createElement('input');
                 tempInput.value = referralLink;
                 document.body.appendChild(tempInput);
@@ -654,7 +916,6 @@
         }
         
         function showNotification(message) {
-            // Создаем временное уведомление
             const notification = document.createElement('div');
             notification.style.cssText = `
                 position: fixed;
@@ -677,7 +938,7 @@
             }, 2000);
         }
         
-        console.log('EarnApp инициализирован');
+        console.log('EarnApp с маркетом инициализирован');
     </script>
 </body>
 </html>
