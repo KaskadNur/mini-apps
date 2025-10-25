@@ -169,6 +169,10 @@
             background: linear-gradient(135deg, #28a745, #20c997);
         }
         
+        .btn-warning {
+            background: linear-gradient(135deg, #ff6b35, #ff8e35);
+        }
+        
         /* Инвентарь в стиле Steam */
         .inventory-container {
             background: rgba(0, 0, 0, 0.3);
@@ -211,6 +215,7 @@
             width: 80%;
             height: 80%;
             object-fit: contain;
+            font-size: 20px;
         }
         
         .item-rarity {
@@ -252,6 +257,106 @@
             font-size: 28px;
             font-weight: bold;
             color: gold;
+        }
+        
+        /* Модальные окна */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 350px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--text-color);
+            cursor: pointer;
+        }
+        
+        .price-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        
+        .price-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        /* Маркет */
+        .market-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .market-item-image {
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-right: 15px;
+        }
+        
+        .market-item-info {
+            flex: 1;
+        }
+        
+        .market-item-name {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        
+        .market-item-seller {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+        
+        .market-item-price {
+            font-weight: bold;
+            color: gold;
+            font-size: 18px;
         }
         
         /* Список */
@@ -505,6 +610,20 @@
             </div>
             
             <div class="card">
+                <h3 style="margin-bottom: 15px;">🎒 Ваш инвентарь</h3>
+                
+                <div class="inventory-container">
+                    <div class="inventory-grid" id="inventoryGrid">
+                        <!-- Слоты инвентаря будут генерироваться через JS -->
+                    </div>
+                    <div class="inventory-stats">
+                        <span>Слотов: 25</span>
+                        <span>Занято: <span id="slotsUsed">3</span></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
                 <h3 style="margin-bottom: 15px;">⚙️ Настройки</h3>
                 
                 <div class="theme-switcher">
@@ -523,52 +642,65 @@
         <!-- Вкладка Маркет -->
         <div id="tab-market" class="tab-content">
             <div class="card">
-                <h3 style="text-align: center; margin-bottom: 15px;">🛍️ Ваш инвентарь</h3>
+                <h3 style="text-align: center; margin-bottom: 15px;">🛍️ Торговая площадка</h3>
+                <p style="text-align: center; margin-bottom: 15px; opacity: 0.8;">
+                    Покупайте и продавайте предметы с другими пользователями
+                </p>
                 
                 <div class="stars-balance">
                     <div class="stars-icon">⭐</div>
                     <div class="stars-amount">125</div>
                 </div>
+            </div>
+            
+            <div class="card">
+                <h3 style="margin-bottom: 15px;">🔥 Популярные товары</h3>
                 
-                <div class="inventory-container">
-                    <div class="inventory-grid" id="inventoryGrid">
-                        <!-- Слоты инвентаря будут генерироваться через JS -->
+                <div class="market-item">
+                    <div class="market-item-image">🎨</div>
+                    <div class="market-item-info">
+                        <div class="market-item-name">Стикерпак "Premium"</div>
+                        <div class="market-item-seller">@user123</div>
                     </div>
-                    <div class="inventory-stats">
-                        <span>Слотов: 25</span>
-                        <span>Занято: <span id="slotsUsed">3</span></span>
+                    <div class="market-item-price">50 ⭐</div>
+                </div>
+                
+                <div class="market-item">
+                    <div class="market-item-image">👑</div>
+                    <div class="market-item-info">
+                        <div class="market-item-name">Золотая рамка</div>
+                        <div class="market-item-seller">@user456</div>
                     </div>
+                    <div class="market-item-price">100 ⭐</div>
+                </div>
+                
+                <div class="market-item">
+                    <div class="market-item-image">💎</div>
+                    <div class="market-item-info">
+                        <div class="market-item-name">Буст x2</div>
+                        <div class="market-item-seller">@user789</div>
+                    </div>
+                    <div class="market-item-price">75 ⭐</div>
                 </div>
             </div>
             
             <div class="card">
-                <h3 style="margin-bottom: 15px;">🎁 Доступные подарки</h3>
+                <h3 style="margin-bottom: 15px;">📈 Недавние сделки</h3>
                 
                 <div class="feature-item">
-                    <div class="feature-icon">🎨</div>
+                    <div class="feature-icon">🛒</div>
                     <div class="feature-text">
                         <div class="feature-title">Стикерпак "Premium"</div>
-                        <div class="feature-desc">Эксклюзивные стикеры для Telegram</div>
+                        <div class="feature-desc">Продано за 50 ⭐</div>
                     </div>
-                    <button class="btn" style="padding: 8px 15px; font-size: 14px;">50 ⭐</button>
                 </div>
                 
                 <div class="feature-item">
-                    <div class="feature-icon">👤</div>
+                    <div class="feature-icon">🛒</div>
                     <div class="feature-text">
-                        <div class="feature-title">Аватарка "Golden"</div>
-                        <div class="feature-desc">Золотая рамка для профиля</div>
+                        <div class="feature-title">Буст x2</div>
+                        <div class="feature-desc">Продано за 75 ⭐</div>
                     </div>
-                    <button class="btn" style="padding: 8px 15px; font-size: 14px;">100 ⭐</button>
-                </div>
-                
-                <div class="feature-item">
-                    <div class="feature-icon">💎</div>
-                    <div class="feature-text">
-                        <div class="feature-title">Буст заработка</div>
-                        <div class="feature-desc">+20% к заработку на 24 часа</div>
-                    </div>
-                    <button class="btn" style="padding: 8px 15px; font-size: 14px;">75 ⭐</button>
                 </div>
             </div>
         </div>
@@ -689,6 +821,56 @@
         </div>
     </div>
     
+    <!-- Модальное окно продажи предмета -->
+    <div id="sellModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🎁 Продать предмет</h3>
+                <button class="modal-close" onclick="closeSellModal()">×</button>
+            </div>
+            
+            <div id="sellItemInfo" style="text-align: center; margin-bottom: 20px;">
+                <!-- Информация о предмете -->
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <button class="btn btn-success" onclick="quickSell()" style="margin-bottom: 10px;">
+                    💰 Быстрая продажа (+<span id="quickSellPrice">0</span> ⭐)
+                </button>
+                <button class="btn btn-warning" onclick="showMarketSell()">
+                    🛍️ Выставить на маркет
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Модальное окно продажи на маркете -->
+    <div id="marketSellModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🏪 Выставить на маркет</h3>
+                <button class="modal-close" onclick="closeMarketSellModal()">×</button>
+            </div>
+            
+            <div id="marketItemInfo" style="text-align: center; margin-bottom: 20px;">
+                <!-- Информация о предмете -->
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: bold;">Цена в звездах:</label>
+                <input type="number" id="itemPrice" class="price-input" placeholder="Введите цену" min="1" value="50">
+                
+                <div style="font-size: 12px; opacity: 0.7; margin-top: 5px;">
+                    Комиссия маркета: 5%
+                </div>
+            </div>
+            
+            <button class="btn btn-success" onclick="listOnMarket()">
+                ✅ Выставить на продажу
+            </button>
+        </div>
+    </div>
+    
     <!-- Нижняя навигация -->
     <div class="tab-navigation">
         <button class="tab-button active" onclick="switchTab('earn')">
@@ -718,6 +900,7 @@
         const tg = window.Telegram.WebApp;
         let userId = null;
         let currentTheme = 'dark';
+        let selectedItemIndex = null;
         
         // Данные пользователя
         let userData = {
@@ -728,11 +911,18 @@
             referralCode: 'EARN7X9K',
             joinDate: new Date().toISOString(),
             inventory: [
-                { id: 1, type: 'sticker', name: 'Стикерпак Premium', rarity: 'rare', image: '🎨' },
-                { id: 2, type: 'boost', name: 'Буст x2', rarity: 'uncommon', image: '💎' },
-                { id: 3, type: 'avatar', name: 'Золотая рамка', rarity: 'epic', image: '👑' }
+                { id: 1, type: 'sticker', name: 'Стикерпак Premium', rarity: 'rare', image: '🎨', basePrice: 50 },
+                { id: 2, type: 'boost', name: 'Буст x2', rarity: 'uncommon', image: '💎', basePrice: 30 },
+                { id: 3, type: 'avatar', name: 'Золотая рамка', rarity: 'epic', image: '👑', basePrice: 100 }
             ]
         };
+        
+        // Данные маркета
+        let marketItems = [
+            { id: 101, item: { name: 'Стикерпак "Premium"', image: '🎨', rarity: 'rare' }, seller: 'user123', price: 50 },
+            { id: 102, item: { name: 'Золотая рамка', image: '👑', rarity: 'epic' }, seller: 'user456', price: 100 },
+            { id: 103, item: { name: 'Буст x2', image: '💎', rarity: 'uncommon' }, seller: 'user789', price: 75 }
+        ];
         
         // Инициализируем приложение
         tg.ready();
@@ -752,7 +942,6 @@
         }
         
         function loadUserData() {
-            // Загружаем тему из localStorage
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme) {
                 currentTheme = savedTheme;
@@ -765,13 +954,11 @@
             const grid = document.getElementById('inventoryGrid');
             grid.innerHTML = '';
             
-            // Создаем 25 слотов инвентаря
             for (let i = 0; i < 25; i++) {
                 const slot = document.createElement('div');
                 slot.className = 'inventory-slot';
-                slot.onclick = () => showItemInfo(i);
+                slot.onclick = () => handleItemClick(i);
                 
-                // Заполняем слоты предметами
                 const item = userData.inventory[i];
                 if (item) {
                     slot.classList.add('filled');
@@ -787,10 +974,103 @@
             document.getElementById('slotsUsed').textContent = userData.inventory.length;
         }
         
-        function showItemInfo(slotIndex) {
+        function handleItemClick(slotIndex) {
             const item = userData.inventory[slotIndex];
             if (item) {
-                showNotification(`🎁 ${item.name} (${getRarityName(item.rarity)})`);
+                selectedItemIndex = slotIndex;
+                openSellModal(item);
+            }
+        }
+        
+        function openSellModal(item) {
+            const modal = document.getElementById('sellModal');
+            const itemInfo = document.getElementById('sellItemInfo');
+            const quickSellPrice = Math.floor(item.basePrice * 0.8); // 80% от базовой цены
+            
+            itemInfo.innerHTML = `
+                <div style="font-size: 40px; margin-bottom: 10px;">${item.image}</div>
+                <div style="font-weight: bold; font-size: 18px;">${item.name}</div>
+                <div style="font-size: 14px; opacity: 0.8;">${getRarityName(item.rarity)}</div>
+            `;
+            
+            document.getElementById('quickSellPrice').textContent = quickSellPrice;
+            modal.style.display = 'block';
+        }
+        
+        function closeSellModal() {
+            document.getElementById('sellModal').style.display = 'none';
+            selectedItemIndex = null;
+        }
+        
+        function showMarketSell() {
+            closeSellModal();
+            const item = userData.inventory[selectedItemIndex];
+            const modal = document.getElementById('marketSellModal');
+            const itemInfo = document.getElementById('marketItemInfo');
+            
+            itemInfo.innerHTML = `
+                <div style="font-size: 40px; margin-bottom: 10px;">${item.image}</div>
+                <div style="font-weight: bold; font-size: 18px;">${item.name}</div>
+                <div style="font-size: 14px; opacity: 0.8;">${getRarityName(item.rarity)}</div>
+            `;
+            
+            document.getElementById('itemPrice').value = item.basePrice;
+            modal.style.display = 'block';
+        }
+        
+        function closeMarketSellModal() {
+            document.getElementById('marketSellModal').style.display = 'none';
+            selectedItemIndex = null;
+        }
+        
+        function quickSell() {
+            const item = userData.inventory[selectedItemIndex];
+            const sellPrice = Math.floor(item.basePrice * 0.8);
+            
+            // Удаляем предмет из инвентаря
+            userData.inventory.splice(selectedItemIndex, 1);
+            userData.balance += sellPrice;
+            
+            // Обновляем интерфейс
+            initializeInventory();
+            updateDisplay();
+            closeSellModal();
+            
+            showNotification(`💰 Предмет продан за ${sellPrice} ⭐`);
+            
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.notificationOccurred('success');
+            }
+        }
+        
+        function listOnMarket() {
+            const price = parseInt(document.getElementById('itemPrice').value);
+            const item = userData.inventory[selectedItemIndex];
+            
+            if (!price || price < 1) {
+                showNotification('❌ Введите корректную цену');
+                return;
+            }
+            
+            // Добавляем предмет на маркет
+            marketItems.push({
+                id: Date.now(),
+                item: item,
+                seller: userId,
+                price: price
+            });
+            
+            // Удаляем предмет из инвентаря
+            userData.inventory.splice(selectedItemIndex, 1);
+            
+            // Обновляем интерфейс
+            initializeInventory();
+            closeMarketSellModal();
+            
+            showNotification(`🏪 Предмет выставлен на маркет за ${price} ⭐`);
+            
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.notificationOccurred('success');
             }
         }
         
@@ -807,11 +1087,9 @@
         }
         
         function updateDisplay() {
-            // Обновляем баланс звезд
             document.getElementById('starsBalance').textContent = userData.balance;
             document.getElementById('totalEarned').textContent = userData.totalEarned;
             
-            // Обновляем профиль
             if (user) {
                 document.getElementById('profileInfo').innerHTML = `
                     <div style="display: flex; align-items: center; margin-bottom: 15px;">
@@ -828,23 +1106,17 @@
         }
         
         function switchTab(tabName) {
-            // Скрываем все вкладки
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
             
-            // Убираем активный класс у всех кнопок
             document.querySelectorAll('.tab-button').forEach(button => {
                 button.classList.remove('active');
             });
             
-            // Показываем выбранную вкладку
             document.getElementById('tab-' + tabName).classList.add('active');
-            
-            // Активируем кнопку
             event.currentTarget.classList.add('active');
             
-            // Обновляем заголовок
             const titles = {
                 'earn': 'Заработок',
                 'profile': 'Профиль', 
@@ -876,26 +1148,20 @@
                     break;
             }
             
-            // Обновляем баланс
             userData.balance += reward;
             userData.totalEarned += reward;
             userData.tasksCompleted += 1;
             
-            // Обновляем отображение
             updateDisplay();
-            
-            // Показываем уведомление
             showNotification(message + ' +' + reward + ' ⭐');
             
-            // Вибрация
             if (tg.HapticFeedback) {
                 tg.HapticFeedback.impactOccurred('light');
             }
         }
         
         function copyReferralLink() {
-            // Правильная реферальная ссылка для Telegram бота
-            const botUsername = 'your_bot_username'; // Замените на username вашего бота
+            const botUsername = 'your_bot_username';
             const referralLink = `https://t.me/${botUsername}?start=${userData.referralCode}`;
             
             navigator.clipboard.writeText(referralLink).then(() => {
