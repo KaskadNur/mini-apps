@@ -9,6 +9,9 @@ const PORT = process.env.PORT || 10000;
 const BOT_TOKEN = process.env.BOT_TOKEN || '7591449691:AAGEsdfrNCgijjCgDwLPRaZ04rlU_UDxJys';
 const bot = new TelegramBot(BOT_TOKEN, { polling: true });
 
+// Хранилище для баллов пользователей (в продакшене используйте БД)
+const userPoints = new Map();
+
 // Статические файлы
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
@@ -18,7 +21,29 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Health check для Render
+// API для получения баллов пользователя
+app.get('/api/user/:userId/points', (req, res) => {
+    const userId = req.params.userId;
+    const points = userPoints.get(userId) || 0;
+    res.json({ userId, points });
+});
+
+// API для добавления баллов
+app.post('/api/user/:userId/add-points', (req, res) => {
+    const userId = req.params.userId;
+    const points = req.body.points || 10;
+    
+    const currentPoints = userPoints.get(userId) || 0;
+    userPoints.set(userId, currentPoints + points);
+    
+    res.json({ 
+        userId, 
+        pointsAdded: points, 
+        totalPoints: userPoints.get(userId) 
+    });
+});
+
+// Health check
 app.get('/health', (req, res) => {
     res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
 });
@@ -26,8 +51,6 @@ app.get('/health', (req, res) => {
 // Обработчик команды /start
 bot.onText(/\/start/, (msg) => {
     const chatId = msg.chat.id;
-    
-    // URL вашего приложения на Render
     const webAppUrl = 'https://telegram-hello-app.onrender.com';
     
     const keyboard = {
@@ -51,7 +74,22 @@ bot.on('message', (msg) => {
             const data = JSON.parse(msg.web_app_data.data);
             console.log('Данные из Web App:', data);
             
-            bot.sendMessage(msg.chat.id, `✅ Привет! Кнопка была нажата ${data.count || 1} раз`);
+            if (data.action === 'ad_watched') {
+                const points = data.points || 10;
+                const userId = data.user_id;
+                
+                // Добавляем баллы за просмотр рекламы
+                const currentPoints = userPoints.get(userId) || 0;
+                userPoints.set(userId, currentPoints + points);
+                
+                bot.sendMessage(
+                    msg.chat.id, 
+                    `🎉 Вы получили ${points} баллов за просмотр рекламы!\nВсего баллов: ${userPoints.get(userId)}`
+                );
+            } else {
+                bot.sendMessage(msg.chat.id, `👋 Привет! Кнопка была нажата ${data.count || 1} раз`);
+            }
+            
         } catch (error) {
             console.error('Ошибка парсинга данных:', error);
         }
