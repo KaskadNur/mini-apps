@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rewards App</title>
+    <title>EarnApp</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * {
@@ -15,154 +15,170 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding-bottom: 70px;
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
             padding: 20px;
         }
         
-        .app-container {
-            width: 100%;
-            max-width: 400px;
+        .header {
             text-align: center;
-            color: white;
+            margin-bottom: 30px;
+            padding-top: 10px;
         }
         
-        h1 {
-            margin-bottom: 20px;
+        .header h1 {
             font-size: 24px;
+            margin-bottom: 5px;
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         
-        .points-display {
-            background: rgba(255, 215, 0, 0.3);
-            border: 2px solid gold;
-            padding: 15px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            font-size: 18px;
-            font-weight: bold;
-            backdrop-filter: blur(10px);
-        }
-        
-        .user-info {
-            background: rgba(255, 255, 255, 0.15);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
+        .header .subtitle {
+            opacity: 0.8;
             font-size: 14px;
-            backdrop-filter: blur(10px);
         }
         
+        /* Навигация */
+        .tab-navigation {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            display: flex;
+            padding: 10px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .tab-button {
+            flex: 1;
+            text-align: center;
+            padding: 12px 0;
+            background: none;
+            border: none;
+            color: #666;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tab-button.active {
+            color: #667eea;
+        }
+        
+        .tab-button i {
+            display: block;
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+        
+        /* Контент вкладок */
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Карточки */
+        .card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .balance-card {
+            text-align: center;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 165, 0, 0.3));
+            border: 2px solid gold;
+        }
+        
+        .balance-amount {
+            font-size: 36px;
+            font-weight: bold;
+            margin: 10px 0;
+            color: gold;
+        }
+        
+        .balance-label {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        /* Кнопки */
         .btn {
-            background: #0088cc;
+            background: linear-gradient(135deg, #0088cc, #00a8ff);
             color: white;
             border: none;
-            padding: 18px 30px;
+            padding: 15px 20px;
             font-size: 16px;
-            border-radius: 25px;
+            border-radius: 12px;
             cursor: pointer;
-            margin: 10px 0;
+            margin: 5px 0;
             transition: all 0.3s ease;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-            font-weight: 600;
             width: 100%;
-            max-width: 300px;
-            backdrop-filter: blur(10px);
+            font-weight: 600;
         }
         
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
         
         .btn:active {
             transform: translateY(0);
         }
         
-        .btn-hello {
-            background: linear-gradient(135deg, #0088cc, #00a8ff);
-        }
-        
-        .btn-ad {
-            background: linear-gradient(135deg, #ff6b35, #ff8e35);
-        }
-        
-        .btn-stars {
-            background: linear-gradient(135deg, #ffd700, #ffed4e);
-            color: #333;
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
         }
         
         .btn-success {
             background: linear-gradient(135deg, #28a745, #20c997);
         }
         
-        .response {
-            background: rgba(255, 255, 255, 0.15);
-            padding: 20px;
-            border-radius: 15px;
-            margin-top: 20px;
-            font-size: 16px;
-            min-height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+        /* Список */
+        .list {
+            list-style: none;
         }
         
-        .ad-container {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 20px;
-            border-radius: 15px;
-            margin: 15px 0;
-            display: none;
-        }
-        
-        .ad-content {
-            background: #1a1a1a;
-            color: white;
-            padding: 30px 20px;
-            border-radius: 10px;
-            margin: 10px 0;
-            min-height: 200px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .ad-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #ffd700;
-        }
-        
-        .ad-description {
-            font-size: 14px;
-            opacity: 0.8;
-            margin-bottom: 15px;
-        }
-        
-        .countdown {
-            font-size: 24px;
-            font-weight: bold;
-            color: #ff6b35;
-            margin: 10px 0;
-        }
-        
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            margin: 15px 0;
-            background: rgba(255, 255, 255, 0.1);
+        .list-item {
             padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            margin-bottom: 8px;
             border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 15px 0;
         }
         
         .stat-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
             text-align: center;
         }
         
@@ -170,6 +186,7 @@
             font-size: 20px;
             font-weight: bold;
             color: gold;
+            margin-bottom: 5px;
         }
         
         .stat-label {
@@ -177,99 +194,308 @@
             opacity: 0.8;
         }
         
-        .reward-animation {
-            animation: pulse 1s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        
-        .incentive-message {
-            background: rgba(255, 215, 0, 0.2);
-            border: 1px solid gold;
-            padding: 10px;
+        /* Реферальная система */
+        .referral-code {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
             border-radius: 10px;
-            margin: 10px 0;
-            font-size: 14px;
+            text-align: center;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+        
+        .referral-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        
+        .referral-stat {
+            text-align: center;
+        }
+        
+        .referral-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffd700;
+        }
+        
+        .referral-text {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .feature-icon {
+            font-size: 20px;
+            margin-right: 15px;
+            width: 30px;
+            text-align: center;
+        }
+        
+        .feature-text {
+            flex: 1;
+        }
+        
+        .feature-title {
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+        
+        .feature-desc {
+            font-size: 12px;
+            opacity: 0.8;
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <h1>🎮 Rewards App</h1>
-        
-        <div class="points-display" id="pointsDisplay">
-            💰 Загрузка баллов...
+    <div class="container">
+        <div class="header">
+            <h1>EarnApp</h1>
+            <div class="subtitle" id="currentTabTitle">Заработок</div>
         </div>
         
-        <div class="user-info" id="userInfo">
-            Загрузка информации...
+        <!-- Вкладка Заработок -->
+        <div id="tab-earn" class="tab-content active">
+            <div class="card balance-card">
+                <div class="balance-label">Ваш баланс</div>
+                <div class="balance-amount" id="balanceAmount">0 ₽</div>
+                <div class="balance-label">Всего заработано: <span id="totalEarned">0 ₽</span></div>
+            </div>
+            
+            <div class="card">
+                <h3 style="margin-bottom: 15px;">🎯 Доступные задания</h3>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">📺</div>
+                    <div class="feature-text">
+                        <div class="feature-title">Просмотр рекламы</div>
+                        <div class="feature-desc">Смотрите видео и получайте деньги</div>
+                    </div>
+                    <button class="btn" style="padding: 8px 15px; font-size: 14px;">+10 ₽</button>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">🎮</div>
+                    <div class="feature-text">
+                        <div class="feature-title">Мини-игры</div>
+                        <div class="feature-desc">Играйте и зарабатывайте</div>
+                    </div>
+                    <button class="btn" style="padding: 8px 15px; font-size: 14px;">+5 ₽</button>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">📱</div>
+                    <div class="feature-text">
+                        <div class="feature-title">Опросы</div>
+                        <div class="feature-desc">Проходите опросы за вознаграждение</div>
+                    </div>
+                    <button class="btn" style="padding: 8px 15px; font-size: 14px;">+15 ₽</button>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 style="margin-bottom: 15px;">🚀 Быстрый заработок</h3>
+                <button class="btn btn-success" onclick="completeTask('ad')">
+                    📺 Смотреть рекламу (+10 ₽)
+                </button>
+                <button class="btn" onclick="completeTask('game')">
+                    🎮 Сыграть в игру (+5 ₽)
+                </button>
+            </div>
         </div>
         
-        <div class="stats">
-            <div class="stat-item">
-                <div class="stat-value" id="totalPoints">0</div>
-                <div class="stat-label">Баллы</div>
+        <!-- Вкладка Профиль -->
+        <div id="tab-profile" class="tab-content">
+            <div class="card">
+                <h3 style="margin-bottom: 15px;">👤 Ваш профиль</h3>
+                <div id="profileInfo">
+                    Загрузка...
+                </div>
             </div>
-            <div class="stat-item">
-                <div class="stat-value" id="adsWatched">0</div>
-                <div class="stat-label">Просмотры</div>
+            
+            <div class="card">
+                <h3 style="margin-bottom: 15px;">📊 Статистика</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="profileBalance">0</div>
+                        <div class="stat-label">Баланс</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="tasksCompleted">0</div>
+                        <div class="stat-label">Заданий</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="daysActive">1</div>
+                        <div class="stat-label">Дней</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="referralsCount">0</div>
+                        <div class="stat-label">Друзей</div>
+                    </div>
+                </div>
             </div>
-            <div class="stat-item">
-                <div class="stat-value" id="totalEarned">0</div>
-                <div class="stat-label">Заработано</div>
+            
+            <div class="card">
+                <h3 style="margin-bottom: 15px;">⚙️ Настройки</h3>
+                <button class="btn btn-secondary">🔔 Уведомления</button>
+                <button class="btn btn-secondary">🌐 Язык</button>
+                <button class="btn btn-secondary">🆘 Поддержка</button>
             </div>
         </div>
         
-        <button class="btn btn-hello" onclick="sayHello()">
-            👋 ПРИВЕТ
+        <!-- Вкладка Друзья -->
+        <div id="tab-friends" class="tab-content">
+            <div class="card">
+                <h3 style="margin-bottom: 15px; text-align: center;">👥 Приглашай друзей</h3>
+                <p style="text-align: center; margin-bottom: 15px; opacity: 0.9;">
+                    💫 Приглашайте друзей и получайте <strong>2% от их дохода</strong>!
+                </p>
+                
+                <div class="referral-stats">
+                    <div class="referral-stat">
+                        <div class="referral-number" id="friendsCount">0</div>
+                        <div class="referral-text">Друзей</div>
+                    </div>
+                    <div class="referral-stat">
+                        <div class="referral-number" id="friendsEarnings">0 ₽</div>
+                        <div class="referral-text">Заработано</div>
+                    </div>
+                    <div class="referral-stat">
+                        <div class="referral-number" id="yourBonus">0 ₽</div>
+                        <div class="referral-text">Ваш бонус</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 style="margin-bottom: 15px;">📝 Ваша реферальная ссылка</h3>
+                <div class="referral-code" id="referralCode">
+                    Загрузка...
+                </div>
+                <button class="btn btn-success" onclick="copyReferralLink()">
+                    📋 Скопировать ссылку
+                </button>
+            </div>
+            
+            <div class="card">
+                <h3 style="margin-bottom: 15px;">🎁 Как это работает?</h3>
+                <div class="feature-item">
+                    <div class="feature-icon">1️⃣</div>
+                    <div class="feature-text">
+                        <div class="feature-title">Пригласите друга</div>
+                        <div class="feature-desc">Отправьте вашу реферальную ссылку</div>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">2️⃣</div>
+                    <div class="feature-text">
+                        <div class="feature-title">Друг начинает зарабатывать</div>
+                        <div class="feature-desc">Он выполняет задания и получает деньги</div>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">3️⃣</div>
+                    <div class="feature-text">
+                        <div class="feature-title">Вы получаете бонусы</div>
+                        <div class="feature-desc">2% от всего заработка вашего друга</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Вкладка Вывести -->
+        <div id="tab-withdraw" class="tab-content">
+            <div class="card">
+                <h3 style="margin-bottom: 15px; text-align: center;">💳 Вывод средств</h3>
+                <div class="balance-amount" style="font-size: 32px;" id="withdrawBalance">0 ₽</div>
+                <div style="text-align: center; opacity: 0.8; margin-bottom: 20px;">
+                    Доступно для вывода
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 style="margin-bottom: 15px;">📤 Способ вывода</h3>
+                <button class="btn" style="text-align: left; margin-bottom: 10px;">
+                    <div style="display: flex; align-items: center;">
+                        <span style="font-size: 20px; margin-right: 10px;">💎</span>
+                        <div>
+                            <div style="font-weight: bold;">Telegram Stars</div>
+                            <div style="font-size: 12px; opacity: 0.8;">Мгновенный вывод</div>
+                        </div>
+                    </div>
+                </button>
+                
+                <button class="btn" style="text-align: left; margin-bottom: 10px;">
+                    <div style="display: flex; align-items: center;">
+                        <span style="font-size: 20px; margin-right: 10px;">🏦</span>
+                        <div>
+                            <div style="font-weight: bold;">Банковская карта</div>
+                            <div style="font-size: 12px; opacity: 0.8;">1-3 рабочих дня</div>
+                        </div>
+                    </div>
+                </button>
+                
+                <button class="btn" style="text-align: left;">
+                    <div style="display: flex; align-items: center;">
+                        <span style="font-size: 20px; margin-right: 10px;">🎁</span>
+                        <div>
+                            <div style="font-weight: bold;">Подарочные карты</div>
+                            <div style="font-size: 12px; opacity: 0.8;">Различные магазины</div>
+                        </div>
+                    </div>
+                </button>
+            </div>
+            
+            <div class="card">
+                <h3 style="margin-bottom: 15px;">💰 Минимальная сумма</h3>
+                <div style="text-align: center; padding: 15px; background: rgba(255, 215, 0, 0.2); border-radius: 10px;">
+                    <div style="font-size: 18px; font-weight: bold; color: gold;">50 ₽</div>
+                    <div style="font-size: 12px; opacity: 0.8;">Минимальная сумма для вывода</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Нижняя навигация -->
+    <div class="tab-navigation">
+        <button class="tab-button active" onclick="switchTab('earn')">
+            <i>💰</i>
+            Заработок
         </button>
-        
-        <button class="btn btn-ad" id="watchAdBtn" onclick="showInteractiveAd()">
-            📺 Смотреть контент (+10 баллов)
+        <button class="tab-button" onclick="switchTab('profile')">
+            <i>👤</i>
+            Профиль
         </button>
-        
-        <!-- Кнопка для Telegram Stars (если доступно) -->
-        <button class="btn btn-stars" id="starsBtn" onclick="showStarsPurchase()" style="display: none;">
-            ⭐ Купить баллы
+        <button class="tab-button" onclick="switchTab('friends')">
+            <i>👥</i>
+            Друзья
         </button>
-        
-        <div class="incentive-message">
-            💡 Смотрите контент и получайте баллы!
-        </div>
-        
-        <div class="ad-container" id="adContainer">
-            <div class="ad-content">
-                <div class="ad-title">🎬 Интересный контент</div>
-                <div class="ad-description">Просмотрите этот контент до конца чтобы получить награду</div>
-                <div class="countdown" id="countdown">5</div>
-                <div>Осталось секунд...</div>
-            </div>
-            <button class="btn btn-success" onclick="completeContentWatch()">
-                ✅ Получить награду
-            </button>
-            <button class="btn" onclick="cancelContentWatch()" style="background: #dc3545;">
-                ❌ Пропустить
-            </button>
-        </div>
-        
-        <div class="response" id="response">
-            Добро пожаловать! Нажимайте кнопки 👆
-        </div>
+        <button class="tab-button" onclick="switchTab('withdraw')">
+            <i>💳</i>
+            Вывести
+        </button>
     </div>
 
     <script>
         // Инициализация Telegram Web App
         const tg = window.Telegram.WebApp;
         let userId = null;
-        let userPoints = 0;
-        let adsWatched = 0;
-        let totalEarned = 0;
-        let adInProgress = false;
-        let countdownInterval;
+        let userData = {
+            balance: 0,
+            totalEarned: 0,
+            referrals: [],
+            tasksCompleted: 0
+        };
         
         // Инициализируем приложение
         tg.ready();
@@ -277,218 +503,181 @@
         
         // Получаем информацию о пользователе
         const user = tg.initDataUnsafe.user;
-        const userInfoElement = document.getElementById('userInfo');
-        
         if (user) {
             userId = user.id;
-            userInfoElement.innerHTML = `
-                👤 ${user.first_name || 'Пользователь'}<br>
-                📱 ID: ${user.id}
-            `;
-            loadUserStats();
-        } else {
-            userInfoElement.innerHTML = '👤 Гость (войдите через Telegram)';
-            document.getElementById('watchAdBtn').disabled = true;
+            initializeUser();
         }
         
-        // Проверяем поддержку Telegram Stars
-        if (tg.initDataUnsafe && tg.initDataUnsafe.canSendAfter) {
-            document.getElementById('starsBtn').style.display = 'block';
+        function initializeUser() {
+            // Загружаем данные пользователя
+            loadUserData();
+            updateDisplay();
         }
         
-        let helloCount = 0;
+        function loadUserData() {
+            // В реальном приложении здесь будет запрос к API
+            // fetch(`/api/user/${userId}`)
+            
+            // Временные данные для демонстрации
+            userData = {
+                balance: 45,
+                totalEarned: 145,
+                referrals: ['user123', 'user456', 'user789'],
+                tasksCompleted: 8,
+                referralCode: 'EARN' + Math.random().toString(36).substring(2, 6).toUpperCase(),
+                joinDate: new Date().toISOString()
+            };
+        }
         
-        function sayHello() {
-            helloCount++;
-            const responseElement = document.getElementById('response');
-            responseElement.innerHTML = `Привет! 😊<br><small>Нажато: ${helloCount} раз</small>`;
+        function updateDisplay() {
+            // Обновляем баланс
+            document.getElementById('balanceAmount').textContent = userData.balance + ' ₽';
+            document.getElementById('totalEarned').textContent = userData.totalEarned + ' ₽';
+            document.getElementById('withdrawBalance').textContent = userData.balance + ' ₽';
+            
+            // Обновляем профиль
+            document.getElementById('profileBalance').textContent = userData.balance;
+            document.getElementById('tasksCompleted').textContent = userData.tasksCompleted;
+            document.getElementById('daysActive').textContent = Math.ceil((new Date() - new Date(userData.joinDate)) / (1000 * 60 * 60 * 24));
+            document.getElementById('referralsCount').textContent = userData.referrals.length;
+            
+            // Обновляем вкладку друзей
+            document.getElementById('friendsCount').textContent = userData.referrals.length;
+            document.getElementById('friendsEarnings').textContent = Math.round(userData.totalEarned * 0.3) + ' ₽';
+            document.getElementById('yourBonus').textContent = Math.round(userData.totalEarned * 0.3 * 0.02) + ' ₽';
+            document.getElementById('referralCode').textContent = userData.referralCode;
+            
+            // Обновляем информацию профиля
+            if (user) {
+                document.getElementById('profileInfo').innerHTML = `
+                    <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                        <div style="width: 50px; height: 50px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-right: 15px;">
+                            👤
+                        </div>
+                        <div>
+                            <div style="font-weight: bold; font-size: 18px;">${user.first_name || 'Пользователь'}</div>
+                            <div style="font-size: 12px; opacity: 0.8;">ID: ${user.id}</div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
+        function switchTab(tabName) {
+            // Скрываем все вкладки
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Убираем активный класс у всех кнопок
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Показываем выбранную вкладку
+            document.getElementById('tab-' + tabName).classList.add('active');
+            
+            // Активируем кнопку
+            event.currentTarget.classList.add('active');
+            
+            // Обновляем заголовок
+            const titles = {
+                'earn': 'Заработок',
+                'profile': 'Профиль',
+                'friends': 'Друзья',
+                'withdraw': 'Вывести'
+            };
+            document.getElementById('currentTabTitle').textContent = titles[tabName];
+        }
+        
+        function completeTask(type) {
+            let reward = 0;
+            let message = '';
+            
+            switch(type) {
+                case 'ad':
+                    reward = 10;
+                    message = '📺 Реклама просмотрена!';
+                    break;
+                case 'game':
+                    reward = 5;
+                    message = '🎮 Игра завершена!';
+                    break;
+            }
+            
+            // Обновляем баланс
+            userData.balance += reward;
+            userData.totalEarned += reward;
+            userData.tasksCompleted += 1;
+            
+            // Обновляем отображение
+            updateDisplay();
+            
+            // Показываем уведомление
+            showNotification(message + ' +' + reward + ' ₽');
             
             // Вибрация
             if (tg.HapticFeedback) {
                 tg.HapticFeedback.impactOccurred('light');
             }
             
-            tg.sendData(JSON.stringify({
-                action: 'hello_button_click',
-                count: helloCount,
-                user_id: userId
-            }));
-        }
-        
-        function showInteractiveAd() {
-            if (adInProgress) return;
-            
-            adInProgress = true;
-            const watchAdBtn = document.getElementById('watchAdBtn');
-            const adContainer = document.getElementById('adContainer');
-            const responseElement = document.getElementById('response');
-            
-            // Блокируем кнопку и показываем контент
-            watchAdBtn.disabled = true;
-            watchAdBtn.textContent = '📺 Контент загружается...';
-            adContainer.style.display = 'block';
-            responseElement.innerHTML = 'Загружаем интересный контент...';
-            
-            // Вибрация
-            if (tg.HapticFeedback) {
-                tg.HapticFeedback.impactOccurred('medium');
-            }
-            
-            // Запускаем обратный отсчет
-            let countdown = 5;
-            const countdownElement = document.getElementById('countdown');
-            countdownElement.textContent = countdown;
-            
-            countdownInterval = setInterval(() => {
-                countdown--;
-                countdownElement.textContent = countdown;
-                
-                if (countdown <= 0) {
-                    clearInterval(countdownInterval);
-                    document.querySelector('.btn-success').disabled = false;
-                    responseElement.innerHTML = '✅ Контент просмотрен! Нажмите "Получить награду"';
-                }
-            }, 1000);
-            
-            // Блокируем кнопку получения награды на время отсчета
-            document.querySelector('.btn-success').disabled = true;
-        }
-        
-        function completeContentWatch() {
-            if (!adInProgress) return;
-            
-            clearInterval(countdownInterval);
-            
-            const pointsEarned = 10;
-            
-            // Обновляем статистику
-            adsWatched++;
-            totalEarned += pointsEarned;
-            userPoints += pointsEarned;
-            
-            // Обновляем интерфейс
-            updateStatsDisplay();
-            
-            // Анимация награды
-            const pointsDisplay = document.getElementById('pointsDisplay');
-            pointsDisplay.classList.add('reward-animation');
-            
-            document.getElementById('response').innerHTML = 
-                `🎉 +${pointsEarned} баллов!<br>Контент просмотрен полностью`;
-            
             // Отправляем данные на сервер
             tg.sendData(JSON.stringify({
-                action: 'content_watched',
-                points: pointsEarned,
+                action: 'task_completed',
+                type: type,
+                reward: reward,
                 user_id: userId,
-                content_count: adsWatched,
-                total_earned: totalEarned,
-                timestamp: new Date().toISOString()
+                balance: userData.balance
             }));
+        }
+        
+        function copyReferralLink() {
+            const referralLink = `https://t.me/your_bot_username?start=${userData.referralCode}`;
             
-            // Сбрасываем интерфейс
-            resetContentInterface();
+            // В реальном приложении используем Clipboard API
+            navigator.clipboard.writeText(referralLink).then(() => {
+                showNotification('📋 Ссылка скопирована!');
+            }).catch(() => {
+                // Fallback для старых браузеров
+                const tempInput = document.createElement('input');
+                tempInput.value = referralLink;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempInput);
+                showNotification('📋 Ссылка скопирована!');
+            });
             
-            // Вибрация успеха
             if (tg.HapticFeedback) {
-                tg.HapticFeedback.notificationOccurred('success');
+                tg.HapticFeedback.impactOccurred('light');
             }
+        }
+        
+        function showNotification(message) {
+            // Создаем временное уведомление
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(0, 0, 0, 0.8);
+                color: white;
+                padding: 15px 20px;
+                border-radius: 10px;
+                z-index: 1000;
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
             
             setTimeout(() => {
-                pointsDisplay.classList.remove('reward-animation');
+                document.body.removeChild(notification);
             }, 2000);
         }
         
-        function cancelContentWatch() {
-            clearInterval(countdownInterval);
-            document.getElementById('response').innerHTML = 
-                '❌ Просмотр отменен<br>Баллы не начислены';
-            
-            resetContentInterface();
-            
-            if (tg.HapticFeedback) {
-                tg.HapticFeedback.impactOccurred('heavy');
-            }
-        }
-        
-        function resetContentInterface() {
-            adInProgress = false;
-            const watchAdBtn = document.getElementById('watchAdBtn');
-            const adContainer = document.getElementById('adContainer');
-            
-            watchAdBtn.disabled = false;
-            watchAdBtn.textContent = '📺 Смотреть контент (+10 баллов)';
-            adContainer.style.display = 'none';
-            document.querySelector('.btn-success').disabled = false;
-        }
-        
-        function showStarsPurchase() {
-            // Открываем интерфейс покупки через Telegram Stars
-            if (tg.showPopup) {
-                tg.showPopup({
-                    title: 'Покупка баллов',
-                    message: 'Вы можете приобрести баллы через Telegram Stars',
-                    buttons: [
-                        { id: 'buy_100', type: 'default', text: '⭐ 100 баллов' },
-                        { id: 'buy_500', type: 'default', text: '⭐⭐ 500 баллов' },
-                        { id: 'cancel', type: 'cancel', text: 'Отмена' }
-                    ]
-                }, function(buttonId) {
-                    if (buttonId === 'buy_100') {
-                        processStarsPurchase(100);
-                    } else if (buttonId === 'buy_500') {
-                        processStarsPurchase(500);
-                    }
-                });
-            } else {
-                document.getElementById('response').innerHTML = 
-                    '⭐ Покупка баллов временно недоступна';
-            }
-        }
-        
-        function processStarsPurchase(points) {
-            // Здесь будет интеграция с Telegram Stars API
-            // Временно имитируем покупку
-            userPoints += points;
-            totalEarned += points;
-            updateStatsDisplay();
-            
-            document.getElementById('response').innerHTML = 
-                `⭐ Получено ${points} баллов!`;
-            
-            tg.sendData(JSON.stringify({
-                action: 'stars_purchase',
-                points: points,
-                user_id: userId,
-                total_points: userPoints
-            }));
-            
-            if (tg.HapticFeedback) {
-                tg.HapticFeedback.notificationOccurred('success');
-            }
-        }
-        
-        function loadUserStats() {
-            if (!userId) return;
-            
-            // Загружаем статистику пользователя
-            userPoints = Math.floor(Math.random() * 50);
-            adsWatched = Math.floor(userPoints / 10);
-            totalEarned = userPoints;
-            
-            updateStatsDisplay();
-        }
-        
-        function updateStatsDisplay() {
-            const pointsDisplay = document.getElementById('pointsDisplay');
-            pointsDisplay.innerHTML = `💰 ${userPoints} баллов`;
-            
-            document.getElementById('totalPoints').textContent = userPoints;
-            document.getElementById('adsWatched').textContent = adsWatched;
-            document.getElementById('totalEarned').textContent = totalEarned;
-        }
-        
-        console.log('Telegram Rewards App инициализирован');
+        console.log('EarnApp инициализирован');
     </script>
 </body>
 </html>
