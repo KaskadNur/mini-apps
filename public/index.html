@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Telegram App</title>
+    <title>Ad Rewards App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Telegram Ad SDK -->
+    <script src="https://telegram.org/js/tg-ad.js"></script>
     <style>
         * {
             margin: 0;
@@ -36,29 +38,31 @@
         }
         
         .points-display {
-            background: rgba(255, 215, 0, 0.2);
+            background: rgba(255, 215, 0, 0.3);
             border: 2px solid gold;
             padding: 15px;
             border-radius: 15px;
             margin-bottom: 20px;
             font-size: 18px;
             font-weight: bold;
+            backdrop-filter: blur(10px);
         }
         
         .user-info {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.15);
             padding: 15px;
             border-radius: 10px;
             margin-bottom: 20px;
             font-size: 14px;
+            backdrop-filter: blur(10px);
         }
         
         .btn {
             background: #0088cc;
             color: white;
             border: none;
-            padding: 15px 30px;
-            font-size: 18px;
+            padding: 18px 30px;
+            font-size: 16px;
             border-radius: 25px;
             cursor: pointer;
             margin: 10px 0;
@@ -67,6 +71,7 @@
             font-weight: 600;
             width: 100%;
             max-width: 300px;
+            backdrop-filter: blur(10px);
         }
         
         .btn:hover {
@@ -78,18 +83,23 @@
             transform: translateY(0);
         }
         
-        .btn-hello {
-            background: #0088cc;
-        }
-        
-        .btn-ad {
-            background: #ff6b35;
-        }
-        
-        .btn-ad:disabled {
+        .btn:disabled {
             background: #666;
             cursor: not-allowed;
             transform: none;
+            opacity: 0.7;
+        }
+        
+        .btn-hello {
+            background: linear-gradient(135deg, #0088cc, #00a8ff);
+        }
+        
+        .btn-ad {
+            background: linear-gradient(135deg, #ff6b35, #ff8e35);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #28a745, #20c997);
         }
         
         .response {
@@ -106,30 +116,56 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
-        .ad-container {
+        .ad-status {
             background: rgba(0, 0, 0, 0.3);
             padding: 15px;
             border-radius: 10px;
             margin: 15px 0;
-            display: none;
-        }
-        
-        .ad-placeholder {
-            background: #333;
-            color: #fff;
-            padding: 40px 20px;
-            border-radius: 10px;
-            margin: 10px 0;
+            font-size: 14px;
         }
         
         .loading {
             opacity: 0.7;
         }
+        
+        .reward-animation {
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 15px 0;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: gold;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.8;
+        }
     </style>
 </head>
 <body>
     <div class="app-container">
-        <h1>🚀 Рекламное приложение</h1>
+        <h1>🎮 Ad Rewards App</h1>
         
         <div class="points-display" id="pointsDisplay">
             💰 Загрузка баллов...
@@ -139,29 +175,35 @@
             Загрузка информации...
         </div>
         
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value" id="totalPoints">0</div>
+                <div class="stat-label">Всего баллов</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="adsWatched">0</div>
+                <div class="stat-label">Просмотров</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="totalEarned">0</div>
+                <div class="stat-label">Заработано</div>
+            </div>
+        </div>
+        
         <button class="btn btn-hello" onclick="sayHello()">
             👋 ПРИВЕТ
         </button>
         
-        <button class="btn btn-ad" id="watchAdBtn" onclick="showAd()">
+        <button class="btn btn-ad" id="watchAdBtn" onclick="showRealAd()">
             📺 Смотреть рекламу (+10 баллов)
         </button>
         
-        <div class="ad-container" id="adContainer">
-            <div class="ad-placeholder">
-                🎬 РЕКЛАМА<br>
-                (Здесь будет рекламный баннер)
-            </div>
-            <button class="btn" onclick="completeAd()" style="background: #28a745;">
-                ✅ Завершить просмотр
-            </button>
-            <button class="btn" onclick="cancelAd()" style="background: #dc3545;">
-                ❌ Отмена
-            </button>
+        <div class="ad-status" id="adStatus" style="display: none;">
+            🎬 Реклама загружается...
         </div>
         
         <div class="response" id="response">
-            Добро пожаловать! 👆
+            Добро пожаловать! Нажимайте кнопки 👆
         </div>
     </div>
 
@@ -170,6 +212,9 @@
         const tg = window.Telegram.WebApp;
         let userId = null;
         let userPoints = 0;
+        let adsWatched = 0;
+        let totalEarned = 0;
+        let adInProgress = false;
         
         // Инициализируем приложение
         tg.ready();
@@ -183,17 +228,17 @@
         if (user) {
             userId = user.id;
             userInfoElement.innerHTML = `
-                👤 Пользователь: ${user.first_name || 'Неизвестно'}<br>
+                👤 ${user.first_name || 'Пользователь'}<br>
                 📱 ID: ${user.id}
             `;
-            loadUserPoints();
+            loadUserStats();
         } else {
-            userInfoElement.innerHTML = '👤 Гость (открыто в браузере)';
-            pointsDisplay.innerHTML = '💰 Войдите через Telegram для получения баллов';
+            userInfoElement.innerHTML = '👤 Гость (войдите через Telegram)';
+            pointsDisplay.innerHTML = '💰 Для получения баллов откройте через бота';
+            document.getElementById('watchAdBtn').disabled = true;
         }
         
         let helloCount = 0;
-        let adInProgress = false;
         
         function sayHello() {
             helloCount++;
@@ -214,110 +259,190 @@
             }));
         }
         
-        function showAd() {
-            if (adInProgress) return;
+        function showRealAd() {
+            if (adInProgress || !userId) return;
             
             adInProgress = true;
-            const adContainer = document.getElementById('adContainer');
             const watchAdBtn = document.getElementById('watchAdBtn');
+            const adStatus = document.getElementById('adStatus');
+            const responseElement = document.getElementById('response');
             
-            // Показываем контейнер с рекламой
-            adContainer.style.display = 'block';
+            // Блокируем кнопку и показываем статус
             watchAdBtn.disabled = true;
-            watchAdBtn.textContent = '📺 Реклама воспроизводится...';
+            watchAdBtn.textContent = '📺 Загрузка рекламы...';
+            adStatus.style.display = 'block';
+            adStatus.innerHTML = '🎬 Загружаем рекламу...';
+            responseElement.innerHTML = 'Подготовка рекламного контента...';
             
-            // Симулируем загрузку рекламы
-            document.getElementById('response').innerHTML = '🎬 Загружаем рекламу...';
-            
+            // Вибрация
             if (tg.HapticFeedback) {
                 tg.HapticFeedback.impactOccurred('medium');
             }
             
-            // В реальном приложении здесь будет вызов Telegram Ad API
-            console.log('Показ рекламы для пользователя:', userId);
+            // Проверяем доступность Telegram Ad API
+            if (typeof telegramAd === 'undefined') {
+                console.error('Telegram Ad API не загружен');
+                handleAdError('Рекламный SDK не загружен');
+                return;
+            }
+            
+            try {
+                // Показываем полноэкранную рекламу
+                telegramAd.showFullscreenAd({
+                    onAdLoaded: function() {
+                        console.log('Реклама загружена');
+                        adStatus.innerHTML = '🎬 Реклама загружена!';
+                    },
+                    
+                    onAdOpened: function() {
+                        console.log('Реклама открыта');
+                        adStatus.innerHTML = '🎬 Реклама воспроизводится...';
+                        responseElement.innerHTML = 'Смотрите рекламу для получения баллов';
+                    },
+                    
+                    onAdClosed: function(wasCompleted) {
+                        console.log('Реклама закрыта, завершена:', wasCompleted);
+                        adStatus.style.display = 'none';
+                        
+                        if (wasCompleted) {
+                            // Пользователь досмотрел рекламу до конца
+                            completeAdWatch();
+                        } else {
+                            // Пользователь пропустил рекламу
+                            handleAdSkipped();
+                        }
+                    },
+                    
+                    onAdError: function(error) {
+                        console.error('Ошибка рекламы:', error);
+                        handleAdError('Ошибка загрузки рекламы: ' + error);
+                    },
+                    
+                    onAdReward: function() {
+                        console.log('Награда за просмотр рекламы');
+                        // Этот колбэк может вызываться для rewarded ads
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Ошибка при показе рекламы:', error);
+                handleAdError('Ошибка: ' + error.message);
+            }
         }
         
-        function completeAd() {
-            if (!adInProgress) return;
-            
-            // Награждаем пользователя баллами
+        function completeAdWatch() {
             const pointsEarned = 10;
             
-            // Отправляем данные о просмотре рекламы
+            // Обновляем статистику
+            adsWatched++;
+            totalEarned += pointsEarned;
+            userPoints += pointsEarned;
+            
+            // Обновляем интерфейс
+            updateStatsDisplay();
+            
+            // Показываем анимацию награды
+            const pointsDisplay = document.getElementById('pointsDisplay');
+            pointsDisplay.classList.add('reward-animation');
+            
+            document.getElementById('response').innerHTML = 
+                `🎉 +${pointsEarned} баллов!<br>Реклама просмотрена полностью`;
+            
+            // Отправляем данные на сервер
             tg.sendData(JSON.stringify({
                 action: 'ad_watched',
                 points: pointsEarned,
                 user_id: userId,
+                ad_count: adsWatched,
+                total_earned: totalEarned,
                 timestamp: new Date().toISOString()
             }));
             
-            // Обновляем интерфейс
-            userPoints += pointsEarned;
-            updatePointsDisplay();
+            // Сбрасываем состояние кнопки
+            resetAdButton();
             
-            document.getElementById('response').innerHTML = 
-                `🎉 +${pointsEarned} баллов за рекламу!<br>Всего: ${userPoints} баллов`;
-            
-            resetAdInterface();
-            
+            // Вибрация успеха
             if (tg.HapticFeedback) {
                 tg.HapticFeedback.notificationOccurred('success');
             }
+            
+            // Убираем анимацию через 2 секунды
+            setTimeout(() => {
+                pointsDisplay.classList.remove('reward-animation');
+            }, 2000);
         }
         
-        function cancelAd() {
-            resetAdInterface();
-            document.getElementById('response').innerHTML = '❌ Просмотр рекламы отменен';
+        function handleAdSkipped() {
+            document.getElementById('response').innerHTML = 
+                '❌ Реклама не досмотрена до конца<br>Баллы не начислены';
+            
+            resetAdButton();
             
             if (tg.HapticFeedback) {
                 tg.HapticFeedback.impactOccurred('heavy');
             }
         }
         
-        function resetAdInterface() {
-            adInProgress = false;
-            const adContainer = document.getElementById('adContainer');
-            const watchAdBtn = document.getElementById('watchAdBtn');
+        function handleAdError(errorMessage) {
+            document.getElementById('response').innerHTML = 
+                `⚠️ ${errorMessage}<br>Попробуйте позже`;
             
-            adContainer.style.display = 'none';
+            resetAdButton();
+        }
+        
+        function resetAdButton() {
+            adInProgress = false;
+            const watchAdBtn = document.getElementById('watchAdBtn');
+            const adStatus = document.getElementById('adStatus');
+            
             watchAdBtn.disabled = false;
             watchAdBtn.textContent = '📺 Смотреть рекламу (+10 баллов)';
+            adStatus.style.display = 'none';
         }
         
-        function loadUserPoints() {
+        function loadUserStats() {
             if (!userId) return;
             
+            // Загружаем статистику пользователя
             // В реальном приложении здесь будет запрос к вашему API
-            // fetch(`/api/user/${userId}/points`)
-            //   .then(response => response.json())
-            //   .then(data => {
-            //       userPoints = data.points;
-            //       updatePointsDisplay();
-            //   });
+            userPoints = Math.floor(Math.random() * 100);
+            adsWatched = Math.floor(userPoints / 10);
+            totalEarned = userPoints;
             
-            // Временная заглушка
-            userPoints = Math.floor(Math.random() * 50);
-            updatePointsDisplay();
+            updateStatsDisplay();
         }
         
-        function updatePointsDisplay() {
-            pointsDisplay.innerHTML = `💰 Баллы: ${userPoints}`;
+        function updateStatsDisplay() {
+            const pointsDisplay = document.getElementById('pointsDisplay');
+            pointsDisplay.innerHTML = `💰 ${userPoints} баллов`;
+            
+            document.getElementById('totalPoints').textContent = userPoints;
+            document.getElementById('adsWatched').textContent = adsWatched;
+            document.getElementById('totalEarned').textContent = totalEarned;
         }
         
-        // Имитация Telegram Ad API (в реальном приложении используйте официальный API)
-        function initializeAds() {
-            if (window.Telegram && window.Telegram.Ad) {
-                // Официальный API рекламы Telegram
-                console.log('Telegram Ad API доступен');
+        // Проверяем доступность рекламы при загрузке
+        function checkAdAvailability() {
+            if (typeof telegramAd !== 'undefined') {
+                console.log('✅ Telegram Ad API доступен');
+                telegramAd.isAdAvailable(function(available) {
+                    if (!available) {
+                        console.warn('Реклама временно недоступна');
+                        document.getElementById('watchAdBtn').disabled = true;
+                        document.getElementById('watchAdBtn').textContent = '📺 Реклама временно недоступна';
+                    }
+                });
             } else {
-                console.log('Используется имитация рекламы');
+                console.warn('❌ Telegram Ad API недоступен');
+                document.getElementById('watchAdBtn').disabled = true;
+                document.getElementById('watchAdBtn').textContent = '📺 Реклама не поддерживается';
             }
         }
         
-        // Инициализируем рекламу при загрузке
-        initializeAds();
+        // Инициализируем при загрузке
+        setTimeout(checkAdAvailability, 1000);
         
-        console.log('Telegram Web App инициализирован');
+        console.log('Telegram Web App с рекламой инициализирован');
     </script>
 </body>
 </html>
