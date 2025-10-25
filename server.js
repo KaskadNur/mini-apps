@@ -3,14 +3,14 @@ const TelegramBot = require('node-telegram-bot-api');
 const path = require('path');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 
 // Токен бота от @BotFather
 const BOT_TOKEN = process.env.BOT_TOKEN || '7591449691:AAGEsdfrNCgijjCgDwLPRaZ04rlU_UDxJys';
 const bot = new TelegramBot(BOT_TOKEN, { polling: true });
 
 // Статические файлы
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
 // Главная страница Web App
@@ -28,7 +28,7 @@ bot.onText(/\/start/, (msg) => {
     const chatId = msg.chat.id;
     
     // URL вашего приложения на Render
-    const webAppUrl = process.env.RENDER_URL || 'https://your-app.onrender.com';
+    const webAppUrl = 'https://telegram-hello-app.onrender.com';
     
     const keyboard = {
         inline_keyboard: [[
@@ -51,15 +51,20 @@ bot.on('message', (msg) => {
             const data = JSON.parse(msg.web_app_data.data);
             console.log('Данные из Web App:', data);
             
-            bot.sendMessage(msg.chat.id, `✅ Получены данные из приложения: ${data.action}`);
+            bot.sendMessage(msg.chat.id, `✅ Привет! Кнопка была нажата ${data.count || 1} раз`);
         } catch (error) {
             console.error('Ошибка парсинга данных:', error);
         }
     }
 });
 
+// Обработка ошибок бота
+bot.on('error', (error) => {
+    console.log('Ошибка бота:', error);
+});
+
 // Запуск сервера
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`✅ Сервер запущен на порту ${PORT}`);
-    console.log(`🌐 Web App доступен`);
+    console.log(`🌐 Web App доступен: https://telegram-hello-app.onrender.com`);
 });
