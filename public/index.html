@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EarnApp</title>
+    <title>PixelArena</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * {
@@ -13,49 +13,48 @@
         }
         
         :root {
-            --bg-primary: linear-gradient(135deg, #667eea, #764ba2);
-            --card-bg: rgba(255, 255, 255, 0.15);
-            --text-color: white;
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --accent-primary: #0f3460;
+            --accent-secondary: #e94560;
+            --text-primary: #ffffff;
+            --text-secondary: #b8b8b8;
+            --card-bg: rgba(255, 255, 255, 0.1);
             --border-color: rgba(255, 255, 255, 0.2);
         }
         
-        [data-theme="light"] {
-            --bg-primary: linear-gradient(135deg, #74b9ff, #0984e3);
-            --card-bg: rgba(255, 255, 255, 0.9);
-            --text-color: #2d3436;
-            --border-color: rgba(0, 0, 0, 0.1);
-        }
-        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Courier New', monospace;
             background: var(--bg-primary);
-            color: var(--text-color);
+            color: var(--text-primary);
             min-height: 100vh;
             padding-bottom: 70px;
-            transition: all 0.3s ease;
+            image-rendering: pixelated;
         }
         
         .container {
             max-width: 400px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 15px;
         }
         
         .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             padding-top: 10px;
         }
         
         .header h1 {
             font-size: 24px;
             margin-bottom: 5px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            color: var(--accent-secondary);
+            text-shadow: 2px 2px 0 #000;
         }
         
         .header .subtitle {
             opacity: 0.8;
-            font-size: 14px;
+            font-size: 12px;
+            color: var(--text-secondary);
         }
         
         /* Навигация */
@@ -64,33 +63,33 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
+            background: var(--bg-secondary);
             display: flex;
-            padding: 10px 0;
-            border-top: 1px solid var(--border-color);
+            padding: 8px 0;
+            border-top: 2px solid var(--accent-primary);
+            z-index: 1000;
         }
         
         .tab-button {
             flex: 1;
             text-align: center;
-            padding: 12px 0;
+            padding: 8px 0;
             background: none;
             border: none;
-            color: #666;
-            font-size: 12px;
+            color: var(--text-secondary);
+            font-size: 10px;
             cursor: pointer;
             transition: all 0.3s ease;
         }
         
         .tab-button.active {
-            color: #667eea;
+            color: var(--accent-secondary);
         }
         
         .tab-button i {
             display: block;
-            font-size: 20px;
-            margin-bottom: 4px;
+            font-size: 16px;
+            margin-bottom: 2px;
         }
         
         /* Контент вкладок */
@@ -100,163 +99,333 @@
         
         .tab-content.active {
             display: block;
-            animation: fadeIn 0.3s ease;
+            animation: pixelAppear 0.3s ease;
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+        @keyframes pixelAppear {
+            from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
         
         /* Карточки */
         .card {
             background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 12px;
             backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 20px;
+        }
+        
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            background: var(--bg-secondary);
+            padding: 8px 12px;
+            border-radius: 6px;
             margin-bottom: 15px;
             border: 1px solid var(--border-color);
         }
         
-        .balance-card {
+        .stat-item {
             text-align: center;
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 165, 0, 0.3));
-            border: 2px solid gold;
         }
         
-        .balance-amount {
-            font-size: 36px;
-            font-weight: bold;
-            margin: 10px 0;
-            color: gold;
-        }
-        
-        .balance-label {
+        .stat-value {
             font-size: 14px;
+            font-weight: bold;
+            color: var(--accent-secondary);
+        }
+        
+        .stat-label {
+            font-size: 10px;
             opacity: 0.8;
         }
         
         /* Кнопки */
         .btn {
-            background: linear-gradient(135deg, #0088cc, #00a8ff);
+            background: linear-gradient(135deg, var(--accent-primary), #1e3a8a);
             color: white;
             border: none;
-            padding: 15px 20px;
-            font-size: 16px;
-            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 14px;
+            border-radius: 6px;
             cursor: pointer;
-            margin: 5px 0;
+            margin: 4px 0;
             transition: all 0.3s ease;
             width: 100%;
-            font-weight: 600;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            border: 2px solid var(--border-color);
         }
         
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 12px rgba(233, 69, 96, 0.3);
         }
         
         .btn:active {
             transform: translateY(0);
         }
         
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.2);
-            color: var(--text-color);
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-secondary), #c1121f);
         }
         
         .btn-success {
-            background: linear-gradient(135deg, #28a745, #20c997);
+            background: linear-gradient(135deg, #10b981, #047857);
         }
         
         .btn-warning {
-            background: linear-gradient(135deg, #ff6b35, #ff8e35);
+            background: linear-gradient(135deg, #f59e0b, #d97706);
         }
         
-        /* Инвентарь в стиле Steam */
-        .inventory-container {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 8px;
+        .btn-small {
+            padding: 8px 12px;
+            font-size: 12px;
+        }
+        
+        /* Боевая арена */
+        .battle-arena {
+            background: var(--bg-secondary);
+            border: 3px solid var(--accent-primary);
+            border-radius: 10px;
             padding: 15px;
             margin: 15px 0;
+            position: relative;
         }
         
-        .inventory-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 8px;
-            margin-bottom: 15px;
+        .fighters-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
         }
         
-        .inventory-slot {
-            aspect-ratio: 1;
-            background: linear-gradient(135deg, #3a3a3a, #2a2a2a);
-            border: 2px solid #4a4a4a;
-            border-radius: 4px;
+        .fighter {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .fighter-avatar {
+            width: 80px;
+            height: 80px;
+            background: var(--card-bg);
+            border: 3px solid var(--border-color);
+            border-radius: 8px;
+            margin: 0 auto 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
-            cursor: pointer;
-            transition: all 0.2s ease;
+            font-size: 32px;
         }
         
-        .inventory-slot:hover {
-            border-color: #666;
+        .health-bar {
+            width: 100%;
+            height: 8px;
+            background: #333;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 5px 0;
+        }
+        
+        .health-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ef4444, #10b981);
+            transition: width 0.3s ease;
+        }
+        
+        .energy-container {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            margin: 5px 0;
+        }
+        
+        .energy-point {
+            width: 12px;
+            height: 12px;
+            background: var(--accent-secondary);
+            border-radius: 50%;
+            border: 1px solid var(--border-color);
+        }
+        
+        .energy-point.empty {
+            background: #333;
+        }
+        
+        .battle-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 15px;
+        }
+        
+        .action-btn {
+            background: var(--accent-primary);
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            padding: 12px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+        }
+        
+        .action-btn:hover {
+            background: var(--accent-secondary);
             transform: scale(1.05);
         }
         
-        .inventory-slot.filled {
-            background: linear-gradient(135deg, #4a4a4a, #3a3a3a);
-            border-color: #666;
+        .action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
         }
         
-        .item-image {
-            width: 80%;
-            height: 80%;
-            object-fit: contain;
-            font-size: 20px;
+        .round-info {
+            text-align: center;
+            font-size: 14px;
+            margin: 10px 0;
+            color: var(--accent-secondary);
+            font-weight: bold;
         }
         
-        .item-rarity {
-            position: absolute;
-            bottom: 2px;
-            right: 2px;
-            font-size: 10px;
+        /* Магазин */
+        .shop-items {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
         }
         
-        .item-rarity.common { color: #b0c3d9; }
-        .item-rarity.uncommon { color: #5e98d9; }
-        .item-rarity.rare { color: #4b69ff; }
-        .item-rarity.epic { color: #8847ff; }
-        .item-rarity.legendary { color: #d32ce6; }
-        .item-rarity.immortal { color: #eb4b4b; }
+        .shop-item {
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
         
-        .inventory-stats {
-            display: flex;
-            justify-content: space-between;
+        .shop-item:hover {
+            border-color: var(--accent-secondary);
+            transform: translateY(-2px);
+        }
+        
+        .shop-item-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        
+        .shop-item-price {
+            color: var(--accent-secondary);
+            font-weight: bold;
             font-size: 12px;
-            opacity: 0.8;
         }
         
-        /* Звезды баланс */
-        .stars-balance {
+        /* Профиль */
+        .hero-card {
+            text-align: center;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .hero-avatar {
+            width: 100px;
+            height: 100px;
+            background: var(--card-bg);
+            border: 4px solid var(--accent-secondary);
+            border-radius: 10px;
+            margin: 0 auto 15px;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 48px;
+        }
+        
+        .hero-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 10px;
             margin: 15px 0;
         }
         
-        .stars-icon {
-            font-size: 24px;
-            color: gold;
+        .hero-stat {
+            background: var(--card-bg);
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
         }
         
-        .stars-amount {
-            font-size: 28px;
+        .stat-name {
+            font-size: 10px;
+            opacity: 0.8;
+            margin-bottom: 4px;
+        }
+        
+        .stat-value {
+            font-size: 14px;
             font-weight: bold;
-            color: gold;
+            color: var(--accent-secondary);
+        }
+        
+        /* Рейтинг */
+        .leaderboard {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .leaderboard-item:last-child {
+            border-bottom: none;
+        }
+        
+        .rank {
+            width: 30px;
+            height: 30px;
+            background: var(--accent-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 12px;
+            margin-right: 12px;
+        }
+        
+        .rank-1 { background: gold; color: #000; }
+        .rank-2 { background: silver; color: #000; }
+        .rank-3 { background: #cd7f32; color: #000; }
+        
+        .player-info {
+            flex: 1;
+        }
+        
+        .player-name {
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .player-stats {
+            font-size: 10px;
+            opacity: 0.8;
+        }
+        
+        .player-score {
+            font-weight: bold;
+            color: var(--accent-secondary);
         }
         
         /* Модальные окна */
@@ -267,8 +436,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 1000;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
             backdrop-filter: blur(5px);
         }
         
@@ -277,12 +446,12 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: var(--card-bg);
+            background: var(--bg-secondary);
             padding: 20px;
-            border-radius: 15px;
+            border-radius: 10px;
             width: 90%;
             max-width: 350px;
-            border: 1px solid var(--border-color);
+            border: 3px solid var(--accent-primary);
         }
         
         .modal-header {
@@ -290,706 +459,475 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
         }
         
         .modal-close {
             background: none;
             border: none;
-            font-size: 24px;
-            color: var(--text-color);
+            font-size: 20px;
+            color: var(--text-primary);
             cursor: pointer;
         }
         
-        .price-input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--text-color);
-            font-size: 16px;
+        /* Анимации */
+        @keyframes damage {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .damage-animation {
+            animation: damage 0.3s ease;
+        }
+        
+        .victory-text {
+            color: var(--accent-secondary);
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            text-shadow: 2px 2px 0 #000;
             margin: 10px 0;
         }
         
-        .price-input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        
-        /* Маркет */
-        .market-item {
-            display: flex;
-            align-items: center;
-            padding: 12px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            margin-bottom: 10px;
-            border: 1px solid var(--border-color);
-        }
-        
-        .market-item-image {
-            width: 50px;
-            height: 50px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            margin-right: 15px;
-        }
-        
-        .market-item-info {
-            flex: 1;
-        }
-        
-        .market-item-name {
-            font-weight: bold;
-            margin-bottom: 4px;
-        }
-        
-        .market-item-seller {
-            font-size: 12px;
-            opacity: 0.7;
-        }
-        
-        .market-item-price {
-            font-weight: bold;
-            color: gold;
-            font-size: 18px;
-        }
-        
-        /* Фильтры маркета */
-        .market-filters {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-        }
-        
-        .filter-btn {
-            padding: 6px 12px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid var(--border-color);
-            border-radius: 15px;
-            color: var(--text-color);
-            cursor: pointer;
-            font-size: 12px;
-            transition: all 0.3s ease;
-        }
-        
-        .filter-btn.active {
-            background: #667eea;
-            color: white;
-        }
-        
-        /* Кнопки действий */
-        .item-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 8px;
-        }
-        
-        .action-btn {
-            flex: 1;
-            padding: 6px 8px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 10px;
-            font-weight: bold;
-        }
-        
-        .time-ago {
-            font-size: 10px;
-            opacity: 0.6;
-            margin-top: 4px;
-        }
-        
-        /* Список */
-        .list {
-            list-style: none;
-        }
-        
-        .list-item {
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.1);
-            margin-bottom: 8px;
-            border-radius: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin: 15px 0;
-        }
-        
-        .stat-item {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-        }
-        
-        .stat-value {
-            font-size: 20px;
-            font-weight: bold;
-            color: gold;
-            margin-bottom: 5px;
-        }
-        
-        .stat-label {
-            font-size: 12px;
-            opacity: 0.8;
-        }
-        
-        /* Реферальная система */
-        .referral-code {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            margin: 15px 0;
-            font-family: monospace;
-            font-size: 18px;
-            font-weight: bold;
-            letter-spacing: 2px;
-        }
-        
-        .referral-stats {
-            display: flex;
-            justify-content: space-around;
-            margin: 20px 0;
-        }
-        
-        .referral-stat {
-            text-align: center;
-        }
-        
-        .referral-number {
+        .defeat-text {
+            color: #6b7280;
             font-size: 24px;
             font-weight: bold;
-            color: #ffd700;
-        }
-        
-        .referral-text {
-            font-size: 12px;
-            opacity: 0.8;
-        }
-        
-        .feature-item {
-            display: flex;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .feature-icon {
-            font-size: 20px;
-            margin-right: 15px;
-            width: 30px;
             text-align: center;
-        }
-        
-        .feature-text {
-            flex: 1;
-        }
-        
-        .feature-title {
-            font-weight: bold;
-            margin-bottom: 2px;
-        }
-        
-        .feature-desc {
-            font-size: 12px;
-            opacity: 0.8;
-        }
-        
-        /* Переключатель темы */
-        .theme-switcher {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
+            text-shadow: 2px 2px 0 #000;
             margin: 10px 0;
-        }
-        
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 24px;
-        }
-        
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 24px;
-        }
-        
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 16px;
-            width: 16px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-        
-        input:checked + .slider {
-            background-color: #667eea;
-        }
-        
-        input:checked + .slider:before {
-            transform: translateX(26px);
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>EarnApp</h1>
-            <div class="subtitle" id="currentTabTitle">Заработок</div>
+            <h1>PIXEL ARENA</h1>
+            <div class="subtitle" id="currentTabTitle">Главное меню</div>
         </div>
         
-        <!-- Вкладка Заработок -->
-        <div id="tab-earn" class="tab-content active">
-            <div class="card balance-card">
-                <div class="stars-balance">
-                    <div class="stars-icon">⭐</div>
-                    <div class="stars-amount" id="starsBalance">125</div>
-                </div>
-                <div class="balance-label">Всего заработано: <span id="totalEarned">145</span> ⭐</div>
+        <!-- Статистика -->
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-value" id="statsLevel">1</div>
+                <div class="stat-label">УРОВЕНЬ</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="statsCoins">100</div>
+                <div class="stat-label">МОНЕТЫ</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="statsEnergy">10/10</div>
+                <div class="stat-label">ЭНЕРГИЯ</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="statsStars">0</div>
+                <div class="stat-label">STARS</div>
+            </div>
+        </div>
+        
+        <!-- Вкладка Главное меню -->
+        <div id="tab-home" class="tab-content active">
+            <div class="card">
+                <h3 style="text-align: center; margin-bottom: 15px; color: var(--accent-secondary);">⚔️ ДОБРО ПОЖАЛОВАТЬ В АРЕНУ!</h3>
+                <p style="text-align: center; margin-bottom: 20px; font-size: 14px; opacity: 0.9;">
+                    Сражайся, побеждай и становись легендой PixelArena!
+                </p>
             </div>
             
             <div class="card">
-                <h3 style="margin-bottom: 15px;">🎯 Доступные задания</h3>
-                
-                <div class="feature-item">
-                    <div class="feature-icon">📺</div>
-                    <div class="feature-text">
-                        <div class="feature-title">Просмотр рекламы</div>
-                        <div class="feature-desc">Смотрите видео и получайте звезды</div>
+                <h3 style="margin-bottom: 15px;">🎮 БЫСТРЫЙ СТАРТ</h3>
+                <button class="btn btn-primary" onclick="startQuickBattle()">
+                    ⚡ Быстрый бой
+                </button>
+                <button class="btn" onclick="switchTab('battle')">
+                    ⚔️ Выбор противника
+                </button>
+            </div>
+            
+            <div class="card">
+                <h3 style="margin-bottom: 15px;">📊 ВАША СТАТИСТИКА</h3>
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <div class="stat-name">ПОБЕДЫ</div>
+                        <div class="stat-value" id="homeWins">0</div>
                     </div>
-                    <button class="btn" style="padding: 8px 15px; font-size: 14px;" onclick="completeTask('ad')">+10 ⭐</button>
-                </div>
-                
-                <div class="feature-item">
-                    <div class="feature-icon">🎮</div>
-                    <div class="feature-text">
-                        <div class="feature-title">Мини-игры</div>
-                        <div class="feature-desc">Играйте и зарабатывайте</div>
+                    <div class="hero-stat">
+                        <div class="stat-name">ПОРАЖЕНИЯ</div>
+                        <div class="stat-value" id="homeLosses">0</div>
                     </div>
-                    <button class="btn" style="padding: 8px 15px; font-size: 14px;" onclick="completeTask('game')">+5 ⭐</button>
-                </div>
-                
-                <div class="feature-item">
-                    <div class="feature-icon">📱</div>
-                    <div class="feature-text">
-                        <div class="feature-title">Опросы</div>
-                        <div class="feature-desc">Проходите опросы за вознаграждение</div>
+                    <div class="hero-stat">
+                        <div class="stat-name">СЕРИЯ ПОБЕД</div>
+                        <div class="stat-value" id="homeStreak">0</div>
                     </div>
-                    <button class="btn" style="padding: 8px 15px; font-size: 14px;" onclick="completeTask('survey')">+15 ⭐</button>
+                    <div class="hero-stat">
+                        <div class="stat-name">ОЧКИ АРЕНЫ</div>
+                        <div class="stat-value" id="homeArenaPoints">0</div>
+                    </div>
                 </div>
             </div>
             
             <div class="card">
-                <h3 style="margin-bottom: 15px;">🚀 Быстрый заработок</h3>
-                <button class="btn btn-success" onclick="completeTask('ad')">
-                    📺 Смотреть рекламу (+10 ⭐)
+                <h3 style="margin-bottom: 15px;">🏆 ТЕКУЩИЙ СЕЗОН</h3>
+                <p style="text-align: center; margin-bottom: 10px; font-size: 12px;">
+                    Сезон завершается через: <strong>7 дней</strong>
+                </p>
+                <button class="btn btn-warning" onclick="switchTab('ranking')">
+                    📈 Смотреть рейтинг
                 </button>
-                <button class="btn" onclick="completeTask('game')">
-                    🎮 Сыграть в игру (+5 ⭐)
+            </div>
+        </div>
+        
+        <!-- Вкладка Бой -->
+        <div id="tab-battle" class="tab-content">
+            <div class="card">
+                <h3 style="text-align: center; margin-bottom: 15px; color: var(--accent-secondary);">⚔️ ВЫБОР ПРОТИВНИКА</h3>
+            </div>
+            
+            <div class="card">
+                <h3 style="margin-bottom: 15px;">🤖 БОТЫ</h3>
+                <button class="btn" onclick="startBotBattle('easy')">
+                    🟢 Новичок (Уровень 1-5)
                 </button>
+                <button class="btn" onclick="startBotBattle('medium')">
+                    🟡 Опытный (Уровень 6-15)
+                </button>
+                <button class="btn" onclick="startBotBattle('hard')">
+                    🔴 Мастер (Уровень 16+)
+                </button>
+            </div>
+            
+            <div class="card">
+                <h3 style="margin-bottom: 15px;">👥 ИГРОКИ</h3>
+                <button class="btn btn-primary" onclick="findPlayerBattle()">
+                    🔍 Найти противника
+                </button>
+                <button class="btn" onclick="challengeFriend()">
+                    👋 Вызвать друга
+                </button>
+            </div>
+            
+            <div class="card">
+                <h3 style="margin-bottom: 15px;">🎫 БИЛЕТЫ НА БОЙ</h3>
+                <div style="text-align: center; padding: 15px; background: var(--card-bg); border-radius: 6px;">
+                    <div style="font-size: 18px; font-weight: bold; color: var(--accent-secondary);" id="battleTickets">3</div>
+                    <div style="font-size: 12px; opacity: 0.8;">Билетов осталось</div>
+                </div>
+                <button class="btn btn-warning btn-small" onclick="buyTickets()" style="margin-top: 10px;">
+                    💰 Купить билеты (10 ⭐)
+                </button>
+            </div>
+        </div>
+        
+        <!-- Вкладка Арена (активный бой) -->
+        <div id="tab-arena" class="tab-content">
+            <div class="battle-arena">
+                <div class="round-info" id="roundInfo">РАУНД 1 ИЗ 3</div>
+                
+                <div class="fighters-container">
+                    <div class="fighter">
+                        <div class="fighter-avatar" id="playerAvatar">⚔️</div>
+                        <div class="fighter-name" id="playerName">ИГРОК</div>
+                        <div class="health-bar">
+                            <div class="health-fill" id="playerHealth" style="width: 100%;"></div>
+                        </div>
+                        <div class="energy-container" id="playerEnergy">
+                            <div class="energy-point"></div>
+                            <div class="energy-point"></div>
+                            <div class="energy-point"></div>
+                        </div>
+                        <div class="fighter-hp" id="playerHP">100/100</div>
+                    </div>
+                    
+                    <div style="font-size: 24px; margin: 0 10px;">VS</div>
+                    
+                    <div class="fighter">
+                        <div class="fighter-avatar" id="enemyAvatar">🤖</div>
+                        <div class="fighter-name" id="enemyName">ПРОТИВНИК</div>
+                        <div class="health-bar">
+                            <div class="health-fill" id="enemyHealth" style="width: 100%;"></div>
+                        </div>
+                        <div class="energy-container" id="enemyEnergy">
+                            <div class="energy-point"></div>
+                            <div class="energy-point"></div>
+                            <div class="energy-point"></div>
+                        </div>
+                        <div class="fighter-hp" id="enemyHP">100/100</div>
+                    </div>
+                </div>
+                
+                <div class="battle-actions">
+                    <button class="action-btn" onclick="makeMove('attack')" style="background: #ef4444;">
+                        ⚔️ АТАКА
+                    </button>
+                    <button class="action-btn" onclick="makeMove('defend')" style="background: #3b82f6;">
+                        🛡️ ЗАЩИТА
+                    </button>
+                    <button class="action-btn" onclick="makeMove('special')" style="background: #8b5cf6;">
+                        ✨ СУПЕР-УДАР
+                    </button>
+                    <button class="action-btn" onclick="surrenderBattle()" style="background: #6b7280;">
+                        🏳️ СДАЧА
+                    </button>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 style="margin-bottom: 10px;">📝 ЛОГ БОЯ</h3>
+                <div id="battleLog" style="font-size: 12px; line-height: 1.4; max-height: 150px; overflow-y: auto;">
+                    <!-- Лог боя будет добавляться здесь -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Вкладка Магазин -->
+        <div id="tab-shop" class="tab-content">
+            <div class="card">
+                <h3 style="text-align: center; margin-bottom: 15px; color: var(--accent-secondary);">🛍️ МАГАЗИН ARENA</h3>
+            </div>
+            
+            <div class="card">
+                <h3 style="margin-bottom: 15px;">💎 ПРЕДМЕТЫ ЗА STARS</h3>
+                <div class="shop-items">
+                    <div class="shop-item" onclick="buyItem('ticket_pack')">
+                        <div class="shop-item-icon">🎫</div>
+                        <div class="shop-item-name">5 билетов</div>
+                        <div class="shop-item-price">10 ⭐</div>
+                    </div>
+                    <div class="shop-item" onclick="buyItem('energy_refill')">
+                        <div class="shop-item-icon">⚡</div>
+                        <div class="shop-item-name">Энергия</div>
+                        <div class="shop-item-price">5 ⭐</div>
+                    </div>
+                    <div class="shop-item" onclick="buyItem('warrior_skin')">
+                        <div class="shop-item-icon">🛡️</div>
+                        <div class="shop-item-name">Скин воина</div>
+                        <div class="shop-item-price">50 ⭐</div>
+                    </div>
+                    <div class="shop-item" onclick="buyItem('mage_skin')">
+                        <div class="shop-item-icon">🔮</div>
+                        <div class="shop-item-name">Скин мага</div>
+                        <div class="shop-item-price">50 ⭐</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 style="margin-bottom: 15px;">🪙 ПРЕДМЕТЫ ЗА МОНЕТЫ</h3>
+                <div class="shop-items">
+                    <div class="shop-item" onclick="buyItem('small_boost')">
+                        <div class="shop-item-icon">💪</div>
+                        <div class="shop-item-name">Буст атаки</div>
+                        <div class="shop-item-price">100 🪙</div>
+                    </div>
+                    <div class="shop-item" onclick="buyItem('health_potion')">
+                        <div class="shop-item-icon">❤️</div>
+                        <div class="shop-item-name">Зелье здоровья</div>
+                        <div class="shop-item-price">80 🪙</div>
+                    </div>
+                    <div class="shop-item" onclick="buyItem('lucky_charm')">
+                        <div class="shop-item-icon">🍀</div>
+                        <div class="shop-item-name">Талисман удачи</div>
+                        <div class="shop-item-price">150 🪙</div>
+                    </div>
+                    <div class="shop-item" onclick="buyItem('exp_boost')">
+                        <div class="shop-item-icon">📈</div>
+                        <div class="shop-item-name">Буст опыта</div>
+                        <div class="shop-item-price">120 🪙</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Вкладка Рейтинг -->
+        <div id="tab-ranking" class="tab-content">
+            <div class="card">
+                <h3 style="text-align: center; margin-bottom: 15px; color: var(--accent-secondary);">🏆 РЕЙТИНГ АРЕНЫ</h3>
+                <p style="text-align: center; margin-bottom: 15px; font-size: 12px; opacity: 0.8;">
+                    Сезон 1 • Завершение: 7 дней
+                </p>
+            </div>
+            
+            <div class="leaderboard">
+                <div class="leaderboard-item">
+                    <div class="rank rank-1">1</div>
+                    <div class="player-info">
+                        <div class="player-name">DragonSlayer</div>
+                        <div class="player-stats">Уровень 25 • 89 побед</div>
+                    </div>
+                    <div class="player-score">2450</div>
+                </div>
+                <div class="leaderboard-item">
+                    <div class="rank rank-2">2</div>
+                    <div class="player-info">
+                        <div class="player-name">ShadowNinja</div>
+                        <div class="player-stats">Уровень 23 • 76 побед</div>
+                    </div>
+                    <div class="player-score">2310</div>
+                </div>
+                <div class="leaderboard-item">
+                    <div class="rank rank-3">3</div>
+                    <div class="player-info">
+                        <div class="player-name">MageMaster</div>
+                        <div class="player-stats">Уровень 22 • 81 победа</div>
+                    </div>
+                    <div class="player-score">2285</div>
+                </div>
+                <div class="leaderboard-item">
+                    <div class="rank">4</div>
+                    <div class="player-info">
+                        <div class="player-name">ArenaChamp</div>
+                        <div class="player-stats">Уровень 21 • 67 побед</div>
+                    </div>
+                    <div class="player-score">2150</div>
+                </div>
+                <div class="leaderboard-item">
+                    <div class="rank">5</div>
+                    <div class="player-info">
+                        <div class="player-name">PixelWarrior</div>
+                        <div class="player-stats">Уровень 20 • 59 побед</div>
+                    </div>
+                    <div class="player-score">1980</div>
+                </div>
+            </div>
+            
+            <div class="card" style="margin-top: 15px;">
+                <h3 style="margin-bottom: 10px;">🎯 ВАША ПОЗИЦИЯ</h3>
+                <div style="text-align: center; padding: 15px; background: var(--card-bg); border-radius: 6px;">
+                    <div style="font-size: 24px; font-weight: bold; color: var(--accent-secondary);">#127</div>
+                    <div style="font-size: 14px; opacity: 0.8;" id="playerRankInfo">0 очков арены</div>
+                </div>
             </div>
         </div>
         
         <!-- Вкладка Профиль -->
         <div id="tab-profile" class="tab-content">
-            <div class="card">
-                <h3 style="margin-bottom: 15px;">👤 Ваш профиль</h3>
-                <div id="profileInfo">
-                    Загрузка...
-                </div>
-            </div>
-            
-            <div class="card">
-                <h3 style="margin-bottom: 15px;">📊 Статистика</h3>
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <div class="stat-value" id="profileBalance">125</div>
-                        <div class="stat-label">Звезды</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="tasksCompleted">8</div>
-                        <div class="stat-label">Заданий</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="daysActive">7</div>
-                        <div class="stat-label">Дней</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="referralsCount">3</div>
-                        <div class="stat-label">Друзей</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="card">
-                <h3 style="margin-bottom: 15px;">🎒 Ваш инвентарь</h3>
+            <div class="hero-card">
+                <div class="hero-avatar" id="profileAvatar">⚔️</div>
+                <div class="hero-name" style="font-size: 18px; font-weight: bold; margin-bottom: 5px;" id="profileName">ИГРОК</div>
+                <div class="hero-class" style="font-size: 14px; opacity: 0.8; margin-bottom: 15px;" id="profileClass">Воин</div>
                 
-                <div class="inventory-container">
-                    <div class="inventory-grid" id="inventoryGrid">
-                        <!-- Слоты инвентаря будут генерироваться через JS -->
+                <div class="level-bar" style="background: #333; border-radius: 10px; height: 8px; margin: 10px 0; overflow: hidden;">
+                    <div class="level-fill" style="background: var(--accent-secondary); height: 100%; width: 25%;"></div>
+                </div>
+                <div style="font-size: 12px; opacity: 0.8;">Уровень <span id="profileLevel">1</span> • <span id="profileExp">25</span>/100 XP</div>
+            </div>
+            
+            <div class="card">
+                <h3 style="margin-bottom: 15px;">📊 ХАРАКТЕРИСТИКИ</h3>
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <div class="stat-name">ЗДОРОВЬЕ</div>
+                        <div class="stat-value" id="profileHealth">100</div>
                     </div>
-                    <div class="inventory-stats">
-                        <span>Слотов: 25</span>
-                        <span>Занято: <span id="slotsUsed">3</span></span>
+                    <div class="hero-stat">
+                        <div class="stat-name">АТАКА</div>
+                        <div class="stat-value" id="profileAttack">10</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="stat-name">ЗАЩИТА</div>
+                        <div class="stat-value" id="profileDefense">5</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="stat-name">СКОРОСТЬ</div>
+                        <div class="stat-value" id="profileSpeed">8</div>
                     </div>
                 </div>
             </div>
             
             <div class="card">
-                <h3 style="margin-bottom: 15px;">⚙️ Настройки</h3>
-                
-                <div class="theme-switcher">
-                    <span>🌙 Тёмная тема</span>
-                    <label class="switch">
-                        <input type="checkbox" id="themeSwitch" onchange="toggleTheme()">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-                
-                <button class="btn btn-secondary">🔔 Уведомления</button>
-                <button class="btn btn-secondary">🆘 Поддержка</button>
-            </div>
-        </div>
-        
-        <!-- Вкладка Маркет -->
-        <div id="tab-market" class="tab-content">
-            <div class="card">
-                <h3 style="text-align: center; margin-bottom: 15px;">🛍️ Торговая площадка</h3>
-                <p style="text-align: center; margin-bottom: 15px; opacity: 0.8;">
-                    Покупайте и продавайте предметы с другими пользователями
-                </p>
-                
-                <div class="stars-balance">
-                    <div class="stars-icon">⭐</div>
-                    <div class="stars-amount" id="marketBalance">125</div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3 style="margin-bottom: 15px;">🔍 Фильтры</h3>
-                <div class="market-filters">
-                    <button class="filter-btn active" onclick="setMarketFilter('all')">Все</button>
-                    <button class="filter-btn" onclick="setMarketFilter('sticker')">Стикеры</button>
-                    <button class="filter-btn" onclick="setMarketFilter('avatar')">Аватарки</button>
-                    <button class="filter-btn" onclick="setMarketFilter('boost')">Бусты</button>
-                    <button class="filter-btn" onclick="setMarketFilter('cheap')">Дешевые</button>
-                    <button class="filter-btn" onclick="setMarketFilter('expensive')">Дорогие</button>
-                </div>
-            </div>
-            
-            <div class="card">
-                <h3 style="margin-bottom: 15px;">🔥 Товары на маркете</h3>
-                <div id="marketItemsList">
-                    <!-- Список товаров будет загружаться через JS -->
-                </div>
-            </div>
-            
-            <div class="card">
-                <h3 style="margin-bottom: 15px;">📈 Недавние сделки</h3>
-                <div id="recentSales">
-                    <div class="feature-item">
-                        <div class="feature-icon">🛒</div>
-                        <div class="feature-text">
-                            <div class="feature-title">Стикерпак "Premium"</div>
-                            <div class="feature-desc">Продано за 50 ⭐</div>
-                        </div>
+                <h3 style="margin-bottom: 15px;">🎒 ИНВЕНТАРЬ</h3>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+                    <div style="background: var(--card-bg); padding: 10px; border-radius: 6px; text-align: center;">
+                        <div style="font-size: 20px;">🎫</div>
+                        <div style="font-size: 10px;">Билеты</div>
+                        <div style="font-size: 12px; font-weight: bold;" id="profileTickets">3</div>
                     </div>
-                    
-                    <div class="feature-item">
-                        <div class="feature-icon">🛒</div>
-                        <div class="feature-text">
-                            <div class="feature-title">Буст x2</div>
-                            <div class="feature-desc">Продано за 75 ⭐</div>
-                        </div>
+                    <div style="background: var(--card-bg); padding: 10px; border-radius: 6px; text-align: center;">
+                        <div style="font-size: 20px;">💪</div>
+                        <div style="font-size: 10px;">Бусты</div>
+                        <div style="font-size: 12px; font-weight: bold;">2</div>
                     </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Вкладка Друзья -->
-        <div id="tab-friends" class="tab-content">
-            <div class="card">
-                <h3 style="margin-bottom: 15px; text-align: center;">👥 Приглашай друзей</h3>
-                <p style="text-align: center; margin-bottom: 15px; opacity: 0.9;">
-                    💫 Приглашайте друзей и получайте <strong>2% от их дохода</strong>!
-                </p>
-                
-                <div class="referral-stats">
-                    <div class="referral-stat">
-                        <div class="referral-number" id="friendsCount">3</div>
-                        <div class="referral-text">Друзей</div>
+                    <div style="background: var(--card-bg); padding: 10px; border-radius: 6px; text-align: center;">
+                        <div style="font-size: 20px;">❤️</div>
+                        <div style="font-size: 10px;">Зелья</div>
+                        <div style="font-size: 12px; font-weight: bold;">1</div>
                     </div>
-                    <div class="referral-stat">
-                        <div class="referral-number" id="friendsEarnings">44 ⭐</div>
-                        <div class="referral-text">Заработано</div>
-                    </div>
-                    <div class="referral-stat">
-                        <div class="referral-number" id="yourBonus">1 ⭐</div>
-                        <div class="referral-text">Ваш бонус</div>
+                    <div style="background: var(--card-bg); padding: 10px; border-radius: 6px; text-align: center;">
+                        <div style="font-size: 20px;">👕</div>
+                        <div style="font-size: 10px;">Скины</div>
+                        <div style="font-size: 12px; font-weight: bold;">3</div>
                     </div>
                 </div>
             </div>
             
             <div class="card">
-                <h3 style="margin-bottom: 15px;">📝 Ваша реферальная ссылка</h3>
-                <div class="referral-code" id="referralCode">
-                    EARN7X9K
-                </div>
-                <button class="btn btn-success" onclick="copyReferralLink()">
-                    📋 Скопировать ссылку
+                <h3 style="margin-bottom: 15px;">⚙️ НАСТРОЙКИ</h3>
+                <button class="btn btn-secondary" onclick="changeHeroClass()">
+                    🛡️ Сменить класс
                 </button>
-            </div>
-            
-            <div class="card">
-                <h3 style="margin-bottom: 15px;">🎁 Как это работает?</h3>
-                <div class="feature-item">
-                    <div class="feature-icon">1️⃣</div>
-                    <div class="feature-text">
-                        <div class="feature-title">Пригласите друга</div>
-                        <div class="feature-desc">Отправьте вашу реферальную ссылку</div>
-                    </div>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon">2️⃣</div>
-                    <div class="feature-text">
-                        <div class="feature-title">Друг начинает зарабатывать</div>
-                        <div class="feature-desc">Он выполняет задания и получает звезды</div>
-                    </div>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon">3️⃣</div>
-                    <div class="feature-text">
-                        <div class="feature-title">Вы получаете бонусы</div>
-                        <div class="feature-desc">2% от всего заработка вашего друга</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Вкладка Вывести -->
-        <div id="tab-withdraw" class="tab-content">
-            <div class="card">
-                <h3 style="margin-bottom: 15px; text-align: center;">💳 Вывод средств</h3>
-                <div class="stars-balance">
-                    <div class="stars-icon">⭐</div>
-                    <div class="stars-amount">125</div>
-                </div>
-                <div style="text-align: center; opacity: 0.8; margin-bottom: 20px;">
-                    Доступно для вывода
-                </div>
-            </div>
-            
-            <div class="card">
-                <h3 style="margin-bottom: 15px;">📤 Способ вывода</h3>
-                <button class="btn" style="text-align: left; margin-bottom: 10px;">
-                    <div style="display: flex; align-items: center;">
-                        <span style="font-size: 20px; margin-right: 10px;">💎</span>
-                        <div>
-                            <div style="font-weight: bold;">Telegram Stars</div>
-                            <div style="font-size: 12px; opacity: 0.8;">Мгновенный вывод</div>
-                        </div>
-                    </div>
+                <button class="btn btn-secondary" onclick="showAchievements()">
+                    🏆 Достижения
                 </button>
-                
-                <button class="btn" style="text-align: left; margin-bottom: 10px;">
-                    <div style="display: flex; align-items: center;">
-                        <span style="font-size: 20px; margin-right: 10px;">🏦</span>
-                        <div>
-                            <div style="font-weight: bold;">Банковская карта</div>
-                            <div style="font-size: 12px; opacity: 0.8;">1-3 рабочих дня</div>
-                        </div>
-                    </div>
+                <button class="btn btn-secondary" onclick="showSettings()">
+                    ⚙️ Настройки
                 </button>
-                
-                <button class="btn" style="text-align: left;">
-                    <div style="display: flex; align-items: center;">
-                        <span style="font-size: 20px; margin-right: 10px;">🎁</span>
-                        <div>
-                            <div style="font-weight: bold;">Подарочные карты</div>
-                            <div style="font-size: 12px; opacity: 0.8;">Различные магазины</div>
-                        </div>
-                    </div>
-                </button>
-            </div>
-            
-            <div class="card">
-                <h3 style="margin-bottom: 15px;">💰 Минимальная сумма</h3>
-                <div style="text-align: center; padding: 15px; background: rgba(255, 215, 0, 0.2); border-radius: 10px;">
-                    <div style="font-size: 18px; font-weight: bold; color: gold;">50 ⭐</div>
-                    <div style="font-size: 12px; opacity: 0.8;">Минимальная сумма для вывода</div>
-                </div>
             </div>
         </div>
     </div>
     
-    <!-- Модальное окно продажи предмета -->
-    <div id="sellModal" class="modal">
+    <!-- Модальное окно результатов боя -->
+    <div id="battleResultModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>🎁 Продать предмет</h3>
-                <button class="modal-close" onclick="closeSellModal()">×</button>
+                <h3>🎯 РЕЗУЛЬТАТЫ БОЯ</h3>
+                <button class="modal-close" onclick="closeBattleResult()">×</button>
             </div>
             
-            <div id="sellItemInfo" style="text-align: center; margin-bottom: 20px;">
-                <!-- Информация о предмете -->
+            <div id="battleResultContent" style="text-align: center;">
+                <!-- Содержимое будет заполнено JavaScript -->
             </div>
             
-            <div style="margin-bottom: 15px;">
-                <button class="btn btn-success" onclick="quickSell()" style="margin-bottom: 10px;">
-                    💰 Быстрая продажа (+<span id="quickSellPrice">0</span> ⭐)
-                </button>
-                <button class="btn btn-warning" onclick="showMarketSell()">
-                    🛍️ Выставить на маркет
-                </button>
-            </div>
-            
-            <button class="btn btn-secondary" onclick="closeSellModal()">
-                ❌ Отмена
-            </button>
-        </div>
-    </div>
-    
-    <!-- Модальное окно продажи на маркете -->
-    <div id="marketSellModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>🏪 Выставить на маркет</h3>
-                <button class="modal-close" onclick="closeMarketSellModal()">×</button>
-            </div>
-            
-            <div id="marketItemInfo" style="text-align: center; margin-bottom: 20px;">
-                <!-- Информация о предмете -->
-            </div>
-            
-            <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 8px; font-weight: bold;">Цена в звездах:</label>
-                <input type="number" id="itemPrice" class="price-input" placeholder="Введите цену" min="1" value="50">
-                
-                <div style="font-size: 12px; opacity: 0.7; margin-top: 5px;">
-                    Комиссия маркета: 5%
-                </div>
-            </div>
-            
-            <button class="btn btn-success" onclick="listOnMarket()">
-                ✅ Выставить на продажу
-            </button>
-            <button class="btn btn-secondary" onclick="closeMarketSellModal()" style="margin-top: 10px;">
-                ❌ Отмена
-            </button>
-        </div>
-    </div>
-
-    <!-- Модальное окно покупки предмета -->
-    <div id="buyModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>🛒 Покупка предмета</h3>
-                <button class="modal-close" onclick="closeBuyModal()">×</button>
-            </div>
-            
-            <div id="buyItemInfo" style="text-align: center; margin-bottom: 20px;">
-                <!-- Информация о покупаемом предмете -->
-            </div>
-            
-            <div style="margin-bottom: 15px;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                    <span>Цена:</span>
-                    <span style="font-weight: bold; color: gold;" id="buyPrice">0 ⭐</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                    <span>Комиссия (5%):</span>
-                    <span style="color: #ff6b6b;" id="buyCommission">0 ⭐</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
-                    <span>Ваш баланс:</span>
-                    <span style="font-weight: bold;" id="buyerBalance">0 ⭐</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; font-weight: bold; padding-top: 10px; border-top: 1px solid var(--border-color);">
-                    <span>Итого к оплате:</span>
-                    <span style="color: gold;" id="buyTotal">0 ⭐</span>
-                </div>
-            </div>
-            
-            <button class="btn btn-success" id="confirmBuyBtn" onclick="confirmPurchase()">
-                ✅ Купить сейчас
-            </button>
-            <button class="btn btn-secondary" onclick="closeBuyModal()" style="margin-top: 10px;">
-                ❌ Отмена
+            <button class="btn btn-primary" onclick="closeBattleResult()" style="margin-top: 15px;">
+                👍 ПОНЯТНО
             </button>
         </div>
     </div>
     
     <!-- Нижняя навигация -->
     <div class="tab-navigation">
-        <button class="tab-button active" onclick="switchTab('earn')">
-            <i>💰</i>
-            Заработок
+        <button class="tab-button active" onclick="switchTab('home')">
+            <i>🏠</i>
+            Главная
+        </button>
+        <button class="tab-button" onclick="switchTab('battle')">
+            <i>⚔️</i>
+            Бой
+        </button>
+        <button class="tab-button" onclick="switchTab('shop')">
+            <i>🛍️</i>
+            Магазин
+        </button>
+        <button class="tab-button" onclick="switchTab('ranking')">
+            <i>🏆</i>
+            Рейтинг
         </button>
         <button class="tab-button" onclick="switchTab('profile')">
             <i>👤</i>
             Профиль
-        </button>
-        <button class="tab-button" onclick="switchTab('market')">
-            <i>🛍️</i>
-            Маркет
-        </button>
-        <button class="tab-button" onclick="switchTab('friends')">
-            <i>👥</i>
-            Друзья
-        </button>
-        <button class="tab-button" onclick="switchTab('withdraw')">
-            <i>💳</i>
-            Вывести
         </button>
     </div>
 
     <script>
         // Глобальные переменные
         let userId = null;
-        let currentTheme = 'dark';
-        let selectedItemIndex = null;
-        let selectedMarketItem = null;
-        let currentMarketFilter = 'all';
         let userData = {};
-        let marketItems = [];
+        let currentBattle = null;
+        const tg = window.Telegram.WebApp;
 
         // Инициализация приложения
-        const tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
 
@@ -1002,8 +940,6 @@
 
         async function initializeApp() {
             await loadUserData();
-            await loadMarketItems();
-            initializeInventory();
             updateDisplay();
         }
 
@@ -1012,455 +948,89 @@
                 // В реальном приложении здесь будет запрос к API
                 userData = {
                     userId: userId,
-                    balance: 125,
-                    totalEarned: 145,
-                    referrals: [],
-                    tasksCompleted: 8,
-                    referralCode: 'EARN7X9K',
-                    joinDate: new Date().toISOString(),
-                    inventory: [
-                        { 
-                            id: 1, 
-                            type: 'sticker', 
-                            name: 'Стикерпак Premium', 
-                            rarity: 'rare', 
-                            image: '🎨', 
-                            basePrice: 50 
-                        },
-                        { 
-                            id: 2, 
-                            type: 'boost', 
-                            name: 'Буст x2', 
-                            rarity: 'uncommon', 
-                            image: '💎', 
-                            basePrice: 30 
-                        },
-                        { 
-                            id: 3, 
-                            type: 'avatar', 
-                            name: 'Золотая рамка', 
-                            rarity: 'epic', 
-                            image: '👑', 
-                            basePrice: 100 
-                        }
-                    ]
-                };
-
-                // Загружаем тему
-                const savedTheme = localStorage.getItem('theme');
-                if (savedTheme) {
-                    currentTheme = savedTheme;
-                    document.body.setAttribute('data-theme', currentTheme);
-                    document.getElementById('themeSwitch').checked = currentTheme === 'light';
-                }
-            } catch (error) {
-                console.error('Ошибка загрузки данных пользователя:', error);
-            }
-        }
-
-        async function loadMarketItems() {
-            try {
-                // В реальном приложении здесь будет запрос к API
-                marketItems = [
-                    {
-                        id: 1001,
-                        item: { 
-                            id: 1001, 
-                            type: 'sticker', 
-                            name: 'Стикерпак "Galaxy"', 
-                            rarity: 'epic', 
-                            image: '🌌', 
-                            basePrice: 80 
-                        },
-                        sellerId: 'test_user_1',
-                        sellerName: 'GalaxyTrader',
-                        price: 75,
-                        createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-                        sold: false
+                    username: user?.first_name || 'Игрок',
+                    level: 5,
+                    experience: 25,
+                    coins: 350,
+                    stars: 15,
+                    energy: 8,
+                    maxEnergy: 10,
+                    arenaPoints: 1250,
+                    hero: {
+                        class: 'warrior',
+                        health: 100,
+                        attack: 12,
+                        defense: 8,
+                        speed: 10,
+                        skills: ['basic_attack', 'power_strike']
                     },
-                    {
-                        id: 1002,
-                        item: { 
-                            id: 1002, 
-                            type: 'avatar', 
-                            name: 'Анимационная рамка', 
-                            rarity: 'rare', 
-                            image: '✨', 
-                            basePrice: 120 
-                        },
-                        sellerId: 'test_user_2',
-                        sellerName: 'FrameMaster',
-                        price: 110,
-                        createdAt: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
-                        sold: false
+                    inventory: {
+                        tickets: 3,
+                        boosts: ['attack_boost', 'health_potion'],
+                        skins: ['default', 'warrior_gold']
                     },
-                    {
-                        id: 1003,
-                        item: { 
-                            id: 1003, 
-                            type: 'boost', 
-                            name: 'Буст x3 на 48ч', 
-                            rarity: 'legendary', 
-                            image: '🚀', 
-                            basePrice: 150 
-                        },
-                        sellerId: 'test_user_3',
-                        sellerName: 'BoostSeller',
-                        price: 140,
-                        createdAt: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
-                        sold: false
+                    stats: {
+                        battles: 27,
+                        wins: 15,
+                        losses: 12,
+                        winStreak: 3
                     }
-                ];
-                
-                updateMarketDisplay();
-            } catch (error) {
-                console.error('Ошибка загрузки маркета:', error);
-            }
-        }
-
-        function initializeInventory() {
-            const grid = document.getElementById('inventoryGrid');
-            grid.innerHTML = '';
-            
-            for (let i = 0; i < 25; i++) {
-                const slot = document.createElement('div');
-                slot.className = 'inventory-slot';
-                slot.onclick = () => handleItemClick(i);
-                
-                const item = userData.inventory[i];
-                if (item) {
-                    slot.classList.add('filled');
-                    slot.innerHTML = `
-                        <div class="item-image">${item.image}</div>
-                        <div class="item-rarity ${item.rarity}">●</div>
-                    `;
-                }
-                
-                grid.appendChild(slot);
-            }
-            
-            document.getElementById('slotsUsed').textContent = userData.inventory.length;
-        }
-
-        function handleItemClick(slotIndex) {
-            const item = userData.inventory[slotIndex];
-            if (item) {
-                selectedItemIndex = slotIndex;
-                openSellModal(item);
-            }
-        }
-
-        function openSellModal(item) {
-            const modal = document.getElementById('sellModal');
-            const itemInfo = document.getElementById('sellItemInfo');
-            const quickSellPrice = Math.floor(item.basePrice * 0.8);
-
-            itemInfo.innerHTML = `
-                <div style="font-size: 40px; margin-bottom: 10px;">${item.image}</div>
-                <div style="font-weight: bold; font-size: 18px;">${item.name}</div>
-                <div style="font-size: 14px; opacity: 0.8;">${getRarityName(item.rarity)}</div>
-            `;
-            
-            document.getElementById('quickSellPrice').textContent = quickSellPrice;
-            modal.style.display = 'block';
-        }
-
-        function closeSellModal() {
-            document.getElementById('sellModal').style.display = 'none';
-            selectedItemIndex = null;
-        }
-
-        function showMarketSell() {
-            closeSellModal();
-            const item = userData.inventory[selectedItemIndex];
-            const modal = document.getElementById('marketSellModal');
-            const itemInfo = document.getElementById('marketItemInfo');
-            
-            itemInfo.innerHTML = `
-                <div style="font-size: 40px; margin-bottom: 10px;">${item.image}</div>
-                <div style="font-weight: bold; font-size: 18px;">${item.name}</div>
-                <div style="font-size: 14px; opacity: 0.8;">${getRarityName(item.rarity)}</div>
-            `;
-            
-            document.getElementById('itemPrice').value = item.basePrice;
-            modal.style.display = 'block';
-        }
-
-        function closeMarketSellModal() {
-            document.getElementById('marketSellModal').style.display = 'none';
-            selectedItemIndex = null;
-        }
-
-        function quickSell() {
-            const item = userData.inventory[selectedItemIndex];
-            const sellPrice = Math.floor(item.basePrice * 0.8);
-
-            // Удаляем предмет из инвентаря
-            userData.inventory.splice(selectedItemIndex, 1);
-            userData.balance += sellPrice;
-            
-            // Обновляем интерфейс
-            initializeInventory();
-            updateDisplay();
-            closeSellModal();
-            
-            showNotification(`💰 Предмет продан за ${sellPrice} ⭐`);
-            
-            if (tg.HapticFeedback) {
-                tg.HapticFeedback.notificationOccurred('success');
-            }
-        }
-
-        function listOnMarket() {
-            const price = parseInt(document.getElementById('itemPrice').value);
-            const item = userData.inventory[selectedItemIndex];
-            
-            if (!price || price < 1) {
-                showNotification('❌ Введите корректную цену');
-                return;
-            }
-            
-            // Добавляем предмет на маркет
-            marketItems.push({
-                id: Date.now(),
-                item: item,
-                sellerId: userId,
-                sellerName: user.first_name || 'User',
-                price: price,
-                createdAt: new Date().toISOString(),
-                sold: false
-            });
-            
-            // Удаляем предмет из инвентаря
-            userData.inventory.splice(selectedItemIndex, 1);
-            
-            // Обновляем интерфейс
-            initializeInventory();
-            updateMarketDisplay();
-            closeMarketSellModal();
-            
-            showNotification(`🏪 Предмет выставлен на маркет за ${price} ⭐`);
-            
-            if (tg.HapticFeedback) {
-                tg.HapticFeedback.notificationOccurred('success');
-            }
-        }
-
-        function updateMarketDisplay() {
-            const marketItemsList = document.getElementById('marketItemsList');
-            const filteredItems = filterMarketItems(marketItems);
-            
-            if (filteredItems.length === 0) {
-                marketItemsList.innerHTML = `
-                    <div style="text-align: center; padding: 40px 20px; opacity: 0.7;">
-                        <div style="font-size: 48px; margin-bottom: 10px;">🛒</div>
-                        <div>Пока нет товаров на маркете</div>
-                    </div>
-                `;
-                return;
-            }
-            
-            marketItemsList.innerHTML = filteredItems.map(item => `
-                <div class="market-item">
-                    <div class="market-item-image">${item.item.image}</div>
-                    <div class="market-item-info">
-                        <div class="market-item-name">${item.item.name}</div>
-                        <div class="market-item-seller">Продавец: ${item.sellerName}</div>
-                        <div class="time-ago">${getTimeAgo(item.createdAt)}</div>
-                        <div class="item-actions">
-                            <button class="action-btn" style="background: #667eea; color: white;" 
-                                    onclick="showItemDetails(${item.id})">
-                                ℹ️ Подробнее
-                            </button>
-                            <button class="action-btn" style="background: #28a745; color: white;" 
-                                    onclick="openBuyModal(${item.id})"
-                                    ${userData.balance < item.price ? 'disabled' : ''}>
-                                🛒 ${item.price} ⭐
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-            
-            document.getElementById('marketBalance').textContent = userData.balance;
-        }
-
-        function filterMarketItems(items) {
-            const availableItems = items.filter(item => !item.sold);
-            
-            switch(currentMarketFilter) {
-                case 'sticker':
-                    return availableItems.filter(item => item.item.type === 'sticker');
-                case 'avatar':
-                    return availableItems.filter(item => item.item.type === 'avatar');
-                case 'boost':
-                    return availableItems.filter(item => item.item.type === 'boost');
-                case 'cheap':
-                    return availableItems.filter(item => item.price <= 50).sort((a, b) => a.price - b.price);
-                case 'expensive':
-                    return availableItems.filter(item => item.price >= 100).sort((a, b) => b.price - a.price);
-                default:
-                    return availableItems;
-            }
-        }
-
-        function setMarketFilter(filter) {
-            currentMarketFilter = filter;
-            
-            // Обновляем активные кнопки фильтров
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            updateMarketDisplay();
-        }
-
-        function openBuyModal(marketItemId) {
-            selectedMarketItem = marketItems.find(item => item.id === marketItemId);
-            if (!selectedMarketItem) return;
-            
-            const modal = document.getElementById('buyModal');
-            const itemInfo = document.getElementById('buyItemInfo');
-            const commission = Math.floor(selectedMarketItem.price * 0.05);
-            const total = selectedMarketItem.price;
-            
-            itemInfo.innerHTML = `
-                <div style="font-size: 40px; margin-bottom: 10px;">${selectedMarketItem.item.image}</div>
-                <div style="font-weight: bold; font-size: 18px;">${selectedMarketItem.item.name}</div>
-                <div style="font-size: 14px; opacity: 0.8;">${getRarityName(selectedMarketItem.item.rarity)}</div>
-                <div style="font-size: 12px; margin-top: 5px;">От: ${selectedMarketItem.sellerName}</div>
-            `;
-            
-            document.getElementById('buyPrice').textContent = selectedMarketItem.price + ' ⭐';
-            document.getElementById('buyCommission').textContent = commission + ' ⭐';
-            document.getElementById('buyerBalance').textContent = userData.balance + ' ⭐';
-            document.getElementById('buyTotal').textContent = total + ' ⭐';
-            
-            const confirmBtn = document.getElementById('confirmBuyBtn');
-            if (userData.balance < total) {
-                confirmBtn.disabled = true;
-                confirmBtn.innerHTML = '❌ Недостаточно звезд';
-            } else {
-                confirmBtn.disabled = false;
-                confirmBtn.innerHTML = '✅ Купить сейчас';
-            }
-            
-            modal.style.display = 'block';
-        }
-
-        function closeBuyModal() {
-            document.getElementById('buyModal').style.display = 'none';
-            selectedMarketItem = null;
-        }
-
-        async function confirmPurchase() {
-            if (!selectedMarketItem || userData.balance < selectedMarketItem.price) {
-                showNotification('❌ Недостаточно средств для покупки');
-                return;
-            }
-            
-            try {
-                // Имитация успешной покупки
-                const result = {
-                    success: true,
-                    item: selectedMarketItem.item,
-                    price: selectedMarketItem.price,
-                    commission: Math.floor(selectedMarketItem.price * 0.05)
                 };
                 
-                if (result.success) {
-                    // Обновляем баланс
-                    userData.balance -= selectedMarketItem.price;
-                    userData.inventory.push(result.item);
-                    
-                    // Помечаем предмет как проданный
-                    selectedMarketItem.sold = true;
-                    
-                    // Обновляем интерфейс
-                    updateDisplay();
-                    initializeInventory();
-                    updateMarketDisplay();
-                    closeBuyModal();
-                    
-                    showNotification(`🎉 Поздравляем! Вы купили "${result.item.name}" за ${result.price} ⭐`);
-                    
-                    if (tg.HapticFeedback) {
-                        tg.HapticFeedback.notificationOccurred('success');
-                    }
-                }
+                updateDisplay();
             } catch (error) {
-                console.error('Ошибка покупки:', error);
-                showNotification('❌ Ошибка при покупке предмета');
+                console.error('Ошибка загрузки данных:', error);
             }
-        }
-
-        function getRarityName(rarity) {
-            const names = {
-                'common': 'Обычный',
-                'uncommon': 'Необычный', 
-                'rare': 'Редкий',
-                'epic': 'Эпический',
-                'legendary': 'Легендарный',
-                'immortal': 'Бессмертный'
-            };
-            return names[rarity] || rarity;
-        }
-
-        function getTimeAgo(timestamp) {
-            const now = new Date();
-            const time = new Date(timestamp);
-            const diff = now - time;
-            
-            const minutes = Math.floor(diff / 60000);
-            const hours = Math.floor(diff / 3600000);
-            const days = Math.floor(diff / 86400000);
-            
-            if (days > 0) return `${days} д. назад`;
-            if (hours > 0) return `${hours} ч. назад`;
-            if (minutes > 0) return `${minutes} мин. назад`;
-            return 'только что';
-        }
-
-        function showItemDetails(marketItemId) {
-            const item = marketItems.find(item => item.id === marketItemId);
-            if (!item) return;
-            
-            showNotification(`ℹ️ ${item.item.name} - ${getRarityName(item.item.rarity)} - ${item.price} ⭐`);
         }
 
         function updateDisplay() {
-            // Обновляем баланс звезд
-            document.getElementById('starsBalance').textContent = userData.balance;
-            document.getElementById('totalEarned').textContent = userData.totalEarned;
-            document.getElementById('marketBalance').textContent = userData.balance;
+            // Обновляем статистику
+            document.getElementById('statsLevel').textContent = userData.level;
+            document.getElementById('statsCoins').textContent = userData.coins;
+            document.getElementById('statsEnergy').textContent = `${userData.energy}/${userData.maxEnergy}`;
+            document.getElementById('statsStars').textContent = userData.stars;
+            
+            // Обновляем главную страницу
+            document.getElementById('homeWins').textContent = userData.stats.wins;
+            document.getElementById('homeLosses').textContent = userData.stats.losses;
+            document.getElementById('homeStreak').textContent = userData.stats.winStreak;
+            document.getElementById('homeArenaPoints').textContent = userData.arenaPoints;
             
             // Обновляем профиль
-            document.getElementById('profileBalance').textContent = userData.balance;
-            document.getElementById('tasksCompleted').textContent = userData.tasksCompleted;
-            document.getElementById('daysActive').textContent = Math.ceil((new Date() - new Date(userData.joinDate)) / (1000 * 60 * 60 * 24));
-            document.getElementById('referralsCount').textContent = userData.referrals.length;
+            document.getElementById('profileName').textContent = userData.username;
+            document.getElementById('profileLevel').textContent = userData.level;
+            document.getElementById('profileExp').textContent = userData.experience;
+            document.getElementById('profileHealth').textContent = userData.hero.health;
+            document.getElementById('profileAttack').textContent = userData.hero.attack;
+            document.getElementById('profileDefense').textContent = userData.hero.defense;
+            document.getElementById('profileSpeed').textContent = userData.hero.speed;
+            document.getElementById('profileTickets').textContent = userData.inventory.tickets;
+            document.getElementById('profileClass').textContent = getClassName(userData.hero.class);
+            document.getElementById('profileAvatar').textContent = getClassEmoji(userData.hero.class);
             
-            // Обновляем вкладку друзей
-            document.getElementById('friendsCount').textContent = userData.referrals.length;
-            document.getElementById('friendsEarnings').textContent = Math.round(userData.totalEarned * 0.3) + ' ⭐';
-            document.getElementById('yourBonus').textContent = Math.round(userData.totalEarned * 0.3 * 0.02) + ' ⭐';
-            document.getElementById('referralCode').textContent = userData.referralCode;
+            // Обновляем рейтинг
+            document.getElementById('playerRankInfo').textContent = `${userData.arenaPoints} очков арены`;
             
-            // Обновляем информацию профиля
-            if (user) {
-                document.getElementById('profileInfo').innerHTML = `
-                    <div style="display: flex; align-items: center; margin-bottom: 15px;">
-                        <div style="width: 50px; height: 50px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-right: 15px;">
-                            👤
-                        </div>
-                        <div>
-                            <div style="font-weight: bold; font-size: 18px;">${user.first_name || 'Пользователь'}</div>
-                            <div style="font-size: 12px; opacity: 0.8;">ID: ${user.id}</div>
-                        </div>
-                    </div>
-                `;
-            }
+            // Обновляем битвы
+            document.getElementById('battleTickets').textContent = userData.inventory.tickets;
+        }
+
+        function getClassName(className) {
+            const classes = {
+                'warrior': 'Воин',
+                'mage': 'Маг',
+                'archer': 'Лучник'
+            };
+            return classes[className] || className;
+        }
+
+        function getClassEmoji(className) {
+            const emojis = {
+                'warrior': '⚔️',
+                'mage': '🔮',
+                'archer': '🏹'
+            };
+            return emojis[className] || '👤';
         }
 
         function switchTab(tabName) {
@@ -1482,97 +1052,319 @@
             
             // Обновляем заголовок
             const titles = {
-                'earn': 'Заработок',
-                'profile': 'Профиль', 
-                'market': 'Маркет',
-                'friends': 'Друзья',
-                'withdraw': 'Вывести'
+                'home': 'Главное меню',
+                'battle': 'Выбор боя', 
+                'arena': 'Арена',
+                'shop': 'Магазин',
+                'ranking': 'Рейтинг',
+                'profile': 'Профиль'
             };
             document.getElementById('currentTabTitle').textContent = titles[tabName];
         }
-        
-        function toggleTheme() {
-            currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            document.body.setAttribute('data-theme', currentTheme);
-            localStorage.setItem('theme', currentTheme);
+
+        async function startQuickBattle() {
+            await startBotBattle('easy');
         }
-        
-        function completeTask(type) {
-            let reward = 0;
-            let message = '';
+
+        async function startBotBattle(difficulty) {
+            try {
+                // Проверяем энергию
+                if (userData.energy < 1) {
+                    showNotification('❌ Недостаточно энергии!');
+                    return;
+                }
+
+                // Создаем бой
+                currentBattle = {
+                    id: Date.now(),
+                    player1: userId,
+                    player2: 'bot',
+                    difficulty: difficulty,
+                    status: 'active',
+                    rounds: [],
+                    currentRound: 1,
+                    player1HP: 100,
+                    player2HP: 100,
+                    player1Energy: 3,
+                    player2Energy: 3
+                };
+
+                // Обновляем интерфейс арены
+                document.getElementById('playerName').textContent = userData.username;
+                document.getElementById('playerAvatar').textContent = getClassEmoji(userData.hero.class);
+                document.getElementById('enemyName').textContent = getBotName(difficulty);
+                document.getElementById('enemyAvatar').textContent = getBotEmoji(difficulty);
+                
+                updateBattleInterface();
+                switchTab('arena');
+                
+                // Вычитаем энергию
+                userData.energy -= 1;
+                updateDisplay();
+                
+                addBattleLog('⚔️ Бой начался! Противник: ' + getBotName(difficulty));
+                
+            } catch (error) {
+                console.error('Ошибка начала боя:', error);
+                showNotification('❌ Ошибка начала боя');
+            }
+        }
+
+        function getBotName(difficulty) {
+            const names = {
+                'easy': 'Новичок Бот',
+                'medium': 'Опытный Бот', 
+                'hard': 'Мастер Бот'
+            };
+            return names[difficulty] || 'Бот';
+        }
+
+        function getBotEmoji(difficulty) {
+            const emojis = {
+                'easy': '🤖',
+                'medium': '👾',
+                'hard': '😈'
+            };
+            return emojis[difficulty] || '🤖';
+        }
+
+        function updateBattleInterface() {
+            if (!currentBattle) return;
             
-            switch(type) {
-                case 'ad':
-                    reward = 10;
-                    message = '📺 Реклама просмотрена!';
-                    break;
-                case 'game':
-                    reward = 5;
-                    message = '🎮 Игра завершена!';
-                    break;
-                case 'survey':
-                    reward = 15;
-                    message = '📱 Опрос пройден!';
-                    break;
+            // Обновляем HP
+            document.getElementById('playerHP').textContent = `${currentBattle.player1HP}/100`;
+            document.getElementById('enemyHP').textContent = `${currentBattle.player2HP}/100`;
+            document.getElementById('playerHealth').style.width = `${currentBattle.player1HP}%`;
+            document.getElementById('enemyHealth').style.width = `${currentBattle.player2HP}%`;
+            
+            // Обновляем энергию
+            updateEnergyDisplay('playerEnergy', currentBattle.player1Energy);
+            updateEnergyDisplay('enemyEnergy', currentBattle.player2Energy);
+            
+            // Обновляем раунд
+            document.getElementById('roundInfo').textContent = `РАУНД ${currentBattle.currentRound} ИЗ 3`;
+        }
+
+        function updateEnergyDisplay(elementId, energy) {
+            const container = document.getElementById(elementId);
+            container.innerHTML = '';
+            for (let i = 0; i < 3; i++) {
+                const point = document.createElement('div');
+                point.className = `energy-point ${i < energy ? '' : 'empty'}`;
+                container.appendChild(point);
+            }
+        }
+
+        async function makeMove(move) {
+            if (!currentBattle || currentBattle.status !== 'active') return;
+            
+            // Ход игрока
+            addBattleLog(`🎯 Вы используете: ${getMoveName(move)}`);
+            
+            // Имитация хода бота
+            const botMoves = ['attack', 'defend', 'special'];
+            const botMove = botMoves[Math.floor(Math.random() * botMoves.length)];
+            
+            // Вычисляем урон
+            const playerDamage = calculateDamage(move, botMove, true);
+            const botDamage = calculateDamage(botMove, move, false);
+            
+            // Применяем урон
+            currentBattle.player1HP = Math.max(0, currentBattle.player1HP - botDamage);
+            currentBattle.player2HP = Math.max(0, currentBattle.player2HP - playerDamage);
+            
+            // Логируем результаты
+            if (playerDamage > 0) {
+                addBattleLog(`💥 Вы наносите ${playerDamage} урона!`);
+                document.getElementById('enemyAvatar').classList.add('damage-animation');
+                setTimeout(() => document.getElementById('enemyAvatar').classList.remove('damage-animation'), 300);
             }
             
-            userData.balance += reward;
-            userData.totalEarned += reward;
-            userData.tasksCompleted += 1;
+            if (botDamage > 0) {
+                addBattleLog(`💢 Противник наносит ${botDamage} урона!`);
+                document.getElementById('playerAvatar').classList.add('damage-animation');
+                setTimeout(() => document.getElementById('playerAvatar').classList.remove('damage-animation'), 300);
+            }
+            
+            // Обновляем интерфейс
+            updateBattleInterface();
+            
+            // Проверяем конец боя
+            if (currentBattle.player1HP <= 0 || currentBattle.player2HP <= 0 || currentBattle.currentRound >= 3) {
+                await finishBattle();
+            } else {
+                currentBattle.currentRound++;
+                updateBattleInterface();
+                addBattleLog(`🔁 Начинается раунд ${currentBattle.currentRound}`);
+            }
+        }
+
+        function calculateDamage(attackMove, defenseMove, isPlayer) {
+            let damage = 0;
+            const baseDamage = isPlayer ? 20 : 15;
+            
+            if (attackMove === 'attack') {
+                damage = defenseMove === 'defend' ? baseDamage * 0.3 : baseDamage;
+            } else if (attackMove === 'special') {
+                damage = defenseMove === 'defend' ? baseDamage * 0.5 : baseDamage * 1.5;
+                // Тратим энергию
+                if (isPlayer) {
+                    currentBattle.player1Energy = Math.max(0, currentBattle.player1Energy - 1);
+                } else {
+                    currentBattle.player2Energy = Math.max(0, currentBattle.player2Energy - 1);
+                }
+            }
+            
+            // Добавляем случайность
+            damage += Math.floor(Math.random() * 10) - 2;
+            return Math.max(0, Math.floor(damage));
+        }
+
+        function getMoveName(move) {
+            const names = {
+                'attack': 'Атака',
+                'defend': 'Защита',
+                'special': 'Супер-удар'
+            };
+            return names[move] || move;
+        }
+
+        function addBattleLog(message) {
+            const log = document.getElementById('battleLog');
+            const entry = document.createElement('div');
+            entry.textContent = message;
+            entry.style.marginBottom = '5px';
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        async function finishBattle() {
+            if (!currentBattle) return;
+            
+            const isWin = currentBattle.player2HP <= 0;
+            currentBattle.status = 'finished';
+            
+            // Начисляем награды
+            const rewards = {
+                coins: isWin ? 50 : 20,
+                experience: isWin ? 25 : 10,
+                arenaPoints: isWin ? 15 : 5
+            };
+            
+            userData.coins += rewards.coins;
+            userData.experience += rewards.experience;
+            userData.arenaPoints += rewards.arenaPoints;
+            userData.stats.battles += 1;
+            
+            if (isWin) {
+                userData.stats.wins += 1;
+                userData.stats.winStreak += 1;
+                addBattleLog('🎉 ПОБЕДА! Вы победили в бою!');
+            } else {
+                userData.stats.losses += 1;
+                userData.stats.winStreak = 0;
+                addBattleLog('💀 ПОРАЖЕНИЕ! Вы проиграли бой.');
+            }
+            
+            // Проверяем уровень
+            if (userData.experience >= userData.level * 100) {
+                userData.level += 1;
+                userData.experience = 0;
+                userData.coins += userData.level * 50;
+                addBattleLog(`🎊 Уровень повышен! Теперь вы уровня ${userData.level}`);
+            }
             
             updateDisplay();
-            showNotification(message + ' +' + reward + ' ⭐');
             
-            if (tg.HapticFeedback) {
-                tg.HapticFeedback.impactOccurred('light');
-            }
+            // Показываем результаты
+            setTimeout(() => showBattleResult(isWin, rewards), 1000);
         }
-        
-        function copyReferralLink() {
-            const botUsername = 'your_bot_username';
-            const referralLink = `https://t.me/${botUsername}?start=${userData.referralCode}`;
+
+        function showBattleResult(isWin, rewards) {
+            const modal = document.getElementById('battleResultModal');
+            const content = document.getElementById('battleResultContent');
             
-            navigator.clipboard.writeText(referralLink).then(() => {
-                showNotification('📋 Ссылка скопирована!');
-            }).catch(() => {
-                const tempInput = document.createElement('input');
-                tempInput.value = referralLink;
-                document.body.appendChild(tempInput);
-                tempInput.select();
-                document.execCommand('copy');
-                document.body.removeChild(tempInput);
-                showNotification('📋 Ссылка скопирована!');
-            });
-            
-            if (tg.HapticFeedback) {
-                tg.HapticFeedback.impactOccurred('light');
-            }
-        }
-        
-        function showNotification(message) {
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background: rgba(0, 0, 0, 0.8);
-                color: white;
-                padding: 15px 20px;
-                border-radius: 10px;
-                z-index: 1000;
-                backdrop-filter: blur(10px);
-                border: 1px solid rgba(255, 255, 255, 0.2);
+            content.innerHTML = `
+                <div class="${isWin ? 'victory-text' : 'defeat-text'}">
+                    ${isWin ? '🎉 ПОБЕДА!' : '💀 ПОРАЖЕНИЕ'}
+                </div>
+                <div style="margin: 15px 0;">
+                    <div style="display: flex; justify-content: space-around; margin-bottom: 10px;">
+                        <div>
+                            <div style="font-size: 12px; opacity: 0.8;">Монеты</div>
+                            <div style="font-size: 18px; font-weight: bold; color: gold;">+${rewards.coins}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; opacity: 0.8;">Опыт</div>
+                            <div style="font-size: 18px; font-weight: bold; color: #10b981;">+${rewards.experience}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; opacity: 0.8;">Очки арены</div>
+                            <div style="font-size: 18px; font-weight: bold; color: var(--accent-secondary);">+${rewards.arenaPoints}</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="font-size: 12px; opacity: 0.8;">
+                    ${isWin ? 'Отличная работа! Продолжайте в том же духе!' : 'Не отчаивайтесь! У вас всё получится!'}
+                </div>
             `;
-            notification.textContent = message;
-            document.body.appendChild(notification);
             
-            setTimeout(() => {
-                document.body.removeChild(notification);
-            }, 2000);
+            modal.style.display = 'block';
         }
-        
-        console.log('EarnApp с полноценной торговой системой инициализирован');
+
+        function closeBattleResult() {
+            document.getElementById('battleResultModal').style.display = 'none';
+            switchTab('home');
+        }
+
+        function surrenderBattle() {
+            if (confirm('Вы уверены, что хотите сдаться?')) {
+                addBattleLog('🏳️ Вы сдались в бою');
+                finishBattle();
+            }
+        }
+
+        function findPlayerBattle() {
+            showNotification('🔍 Поиск противника...');
+        }
+
+        function challengeFriend() {
+            showNotification('👋 Функция вызова друга скоро будет доступна!');
+        }
+
+        function buyTickets() {
+            if (userData.stars >= 10) {
+                userData.stars -= 10;
+                userData.inventory.tickets += 5;
+                updateDisplay();
+                showNotification('🎫 Куплено 5 билетов за 10 ⭐');
+            } else {
+                showNotification('❌ Недостаточно Stars для покупки');
+            }
+        }
+
+        function buyItem(item) {
+            showNotification(`🛍️ Покупка "${item}" скоро будет доступна!`);
+        }
+
+        function changeHeroClass() {
+            showNotification('🛡️ Смена класса скоро будет доступна!');
+        }
+
+        function showAchievements() {
+            showNotification('🏆 Достижения скоро будут доступны!');
+        }
+
+        function showSettings() {
+            showNotification('⚙️ Настройки скоро будут доступны!');
+        }
+
+        function showNotification(message) {
+            // В реальном приложении можно использовать Telegram WebApp.showPopup
+            alert(message);
+        }
+
+        console.log('PixelArena инициализирована! Готов к битвам! ⚔️');
     </script>
 </body>
 </html>
