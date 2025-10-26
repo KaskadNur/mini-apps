@@ -9,10 +9,10 @@ const PORT = process.env.PORT || 10000;
 const BOT_TOKEN = process.env.BOT_TOKEN || '7591449691:AAGEsdfrNCgijjCgDwLPRaZ04rlU_UDxJys';
 const bot = new TelegramBot(BOT_TOKEN, { polling: true });
 
-// Хранилище для пользователей и маркета (в продакшене используйте БД)
+// Хранилище для пользователей (в продакшене используйте MongoDB)
 const users = new Map();
-const marketItems = new Map();
-let itemIdCounter = 1000;
+const battles = new Map();
+let battleIdCounter = 1;
 
 // Статические файлы
 app.use(express.static(path.join(__dirname, 'public')));
@@ -30,180 +30,238 @@ app.get('/api/user/:userId', (req, res) => {
     res.json(userData);
 });
 
-// API для обновления баланса
-app.post('/api/user/:userId/update-balance', (req, res) => {
+// API для обновления пользователя
+app.post('/api/user/:userId/update', (req, res) => {
     const userId = req.params.userId;
-    const { balance, earned } = req.body;
+    const updates = req.body;
     
     let userData = users.get(userId);
     if (!userData) {
         userData = createNewUser(userId);
     }
     
-    if (balance !== undefined) userData.balance = balance;
-    if (earned !== undefined) userData.totalEarned = earned;
-    
+    // Обновляем данные пользователя
+    Object.assign(userData, updates);
     users.set(userId, userData);
+    
     res.json(userData);
 });
 
-// API для получения предметов маркета
-app.get('/api/market/items', (req, res) => {
-    const items = Array.from(marketItems.values())
-        .filter(item => !item.sold)
-        .sort((a, b) => b.createdAt - a.createdAt)
-        .slice(0, 50); // Ограничиваем количество возвращаемых предметов
+// API для начала боя
+app.post('/api/battle/start', (req, res) => {
+    const { userId, opponentType = 'bot' } = req.body;
     
-    res.json(items);
-});
-
-// API для выставления предмета на маркет
-app.post('/api/market/sell', (req, res) => {
-    const { userId, item, price } = req.body;
-    
-    let userData = users.get(userId);
+    const userData = users.get(userId);
     if (!userData) {
         return res.status(404).json({ error: 'User not found' });
     }
     
-    // Проверяем, есть ли предмет у пользователя
-    const itemIndex = userData.inventory.findIndex(invItem => invItem.id === item.id);
-    if (itemIndex === -1) {
-        return res.status(400).json({ error: 'Item not found in inventory' });
+    // Проверяем энергию
+    if (userData.energy < 1) {
+        return res.status(400).json({ error: 'Not enough energy' });
     }
     
-    // Удаляем предмет из инвентаря
-    const [removedItem] = userData.inventory.splice(itemIndex, 1);
-    
-    // Добавляем предмет на маркет
-    const marketItem = {
-        id: itemIdCounter++,
-        item: removedItem,
-        sellerId: userId,
-        sellerName: userData.username || `User${userId}`,
-        price: parseInt(price),
-        createdAt: new Date().toISOString(),
-        sold: false
+    // Создаем бой
+    const battle = {
+        id: battleIdCounter++,
+        player1: userId,
+        player2: opponentType === 'bot' ? 'bot' : null,
+        status: 'active',
+        rounds: [],
+        currentRound: 1,
+        player1HP: 100,
+        player2HP: 100,
+        player1Energy: 3,
+        player2Energy: 3,
+        createdAt: new Date().toISOString()
     };
     
-    marketItems.set(marketItem.id, marketItem);
+    battles.set(battle.id, battle);
+    
+    // Вычитаем энергию
+    userData.energy -= 1;
     users.set(userId, userData);
     
-    res.json({ success: true, marketItem });
+    res.json({ battle, user: userData });
 });
 
-// API для покупки предмета
-app.post('/api/market/buy', (req, res) => {
-    const { userId, itemId } = req.body;
+// API для хода в бою
+app.post('/api/battle/move', (req, res) => {
+    const { battleId, userId, move } = req.body;
     
-    const marketItem = marketItems.get(parseInt(itemId));
-    if (!marketItem || marketItem.sold) {
-        return res.status(404).json({ error: 'Item not found or already sold' });
+    const battle = battles.get(battleId);
+    if (!battle) {
+        return res.status(404).json({ error: 'Battle not found' });
     }
     
-    let buyerData = users.get(userId);
-    let sellerData = users.get(marketItem.sellerId);
+    // Записываем ход игрока
+    if (!battle.rounds[battle.currentRound - 1]) {
+        battle.rounds[battle.currentRound - 1] = {};
+    }
+    battle.rounds[battle.currentRound - 1].player1 = move;
     
-    if (!buyerData || !sellerData) {
-        return res.status(404).json({ error: 'User not found' });
+    // Ход бота (если это бот)
+    if (battle.player2 === 'bot') {
+        const botMoves = ['attack', 'defend', 'special'];
+        const botMove = botMoves[Math.floor(Math.random() * botMoves.length)];
+        battle.rounds[battle.currentRound - 1].player2 = botMove;
+        
+        // Вычисляем результат раунда
+        processRound(battle);
     }
     
-    if (buyerData.balance < marketItem.price) {
-        return res.status(400).json({ error: 'Insufficient balance' });
-    }
-    
-    // Вычисляем комиссию (5%)
-    const commission = Math.floor(marketItem.price * 0.05);
-    const sellerEarnings = marketItem.price - commission;
-    
-    // Переводим средства
-    buyerData.balance -= marketItem.price;
-    sellerData.balance += sellerEarnings;
-    
-    // Передаем предмет
-    buyerData.inventory.push(marketItem.item);
-    
-    // Помечаем предмет как проданный
-    marketItem.sold = true;
-    marketItem.buyerId = userId;
-    marketItem.soldAt = new Date().toISOString();
-    
-    // Сохраняем изменения
-    users.set(userId, buyerData);
-    users.set(marketItem.sellerId, sellerData);
-    marketItems.set(marketItem.id, marketItem);
-    
-    res.json({ 
-        success: true, 
-        item: marketItem.item,
-        price: marketItem.price,
-        commission: commission
-    });
+    battles.set(battleId, battle);
+    res.json({ battle });
 });
 
-// API для быстрой продажи
-app.post('/api/market/quick-sell', (req, res) => {
-    const { userId, itemId } = req.body;
+// API для завершения боя
+app.post('/api/battle/finish', (req, res) => {
+    const { battleId, userId } = req.body;
     
-    let userData = users.get(userId);
+    const battle = battles.get(battleId);
+    if (!battle) {
+        return res.status(404).json({ error: 'Battle not found' });
+    }
+    
+    const userData = users.get(userId);
     if (!userData) {
         return res.status(404).json({ error: 'User not found' });
     }
     
-    const itemIndex = userData.inventory.findIndex(item => item.id === itemId);
-    if (itemIndex === -1) {
-        return res.status(400).json({ error: 'Item not found in inventory' });
-    }
+    // Начисляем награды
+    const isWin = battle.player1HP > 0 && battle.player2HP <= 0;
+    const rewards = calculateRewards(battle, isWin);
     
-    const item = userData.inventory[itemIndex];
-    const quickSellPrice = Math.floor(item.basePrice * 0.8); // 80% от базовой цены
+    userData.coins += rewards.coins;
+    userData.experience += rewards.experience;
+    userData.arenaPoints += rewards.arenaPoints;
     
-    // Удаляем предмет и добавляем деньги
-    userData.inventory.splice(itemIndex, 1);
-    userData.balance += quickSellPrice;
+    // Проверяем уровень
+    checkLevelUp(userData);
+    
+    battle.status = 'finished';
+    battle.rewards = rewards;
+    battle.winner = isWin ? userId : 'bot';
     
     users.set(userId, userData);
+    battles.set(battleId, battle);
     
-    res.json({ 
-        success: true, 
-        price: quickSellPrice,
-        balance: userData.balance
-    });
+    res.json({ battle, user: userData, rewards });
 });
 
 function createNewUser(userId) {
     const userData = {
         userId: userId,
-        balance: 100, // Начальный баланс
-        totalEarned: 0,
-        referrals: [],
-        joinDate: new Date().toISOString(),
-        referralCode: generateReferralCode(),
-        inventory: [
-            { 
-                id: 1, 
-                type: 'sticker', 
-                name: 'Стикерпак Premium', 
-                rarity: 'rare', 
-                image: '🎨', 
-                basePrice: 50 
-            },
-            { 
-                id: 2, 
-                type: 'boost', 
-                name: 'Буст x2', 
-                rarity: 'uncommon', 
-                image: '💎', 
-                basePrice: 30 
-            }
-        ]
+        username: `Player${Math.random().toString(36).substring(2, 6)}`,
+        level: 1,
+        experience: 0,
+        coins: 100,
+        stars: 0,
+        energy: 10,
+        maxEnergy: 10,
+        arenaPoints: 0,
+        hero: {
+            class: 'warrior',
+            health: 100,
+            attack: 10,
+            defense: 5,
+            speed: 8,
+            skills: ['basic_attack']
+        },
+        inventory: {
+            tickets: 3,
+            boosts: [],
+            skins: ['default']
+        },
+        stats: {
+            battles: 0,
+            wins: 0,
+            losses: 0,
+            winStreak: 0
+        },
+        joinDate: new Date().toISOString()
     };
     users.set(userId, userData);
     return userData;
 }
 
-function generateReferralCode() {
-    return Math.random().toString(36).substring(2, 8).toUpperCase();
+function processRound(battle) {
+    const round = battle.rounds[battle.currentRound - 1];
+    const playerMove = round.player1;
+    const botMove = round.player2;
+    
+    // Логика боя
+    let playerDamage = 0;
+    let botDamage = 0;
+    
+    // Игрок атакует
+    if (playerMove === 'attack') {
+        if (botMove !== 'defend') {
+            botDamage = 20 + Math.floor(Math.random() * 10);
+        } else {
+            botDamage = 5 + Math.floor(Math.random() * 5); // Уменьшенный урон при защите
+        }
+    } else if (playerMove === 'special' && battle.player1Energy > 0) {
+        if (botMove !== 'defend') {
+            botDamage = 35 + Math.floor(Math.random() * 15);
+        } else {
+            botDamage = 10 + Math.floor(Math.random() * 5);
+        }
+        battle.player1Energy--;
+    }
+    
+    // Бот атакует
+    if (botMove === 'attack') {
+        if (playerMove !== 'defend') {
+            playerDamage = 15 + Math.floor(Math.random() * 8);
+        } else {
+            playerDamage = 4 + Math.floor(Math.random() * 4);
+        }
+    } else if (botMove === 'special' && battle.player2Energy > 0) {
+        if (playerMove !== 'defend') {
+            playerDamage = 30 + Math.floor(Math.random() * 12);
+        } else {
+            playerDamage = 8 + Math.floor(Math.random() * 4);
+        }
+        battle.player2Energy--;
+    }
+    
+    // Применяем урон
+    battle.player1HP = Math.max(0, battle.player1HP - playerDamage);
+    battle.player2HP = Math.max(0, battle.player2HP - botDamage);
+    
+    round.playerDamage = playerDamage;
+    round.botDamage = botDamage;
+    
+    // Переходим к следующему раунду или завершаем бой
+    if (battle.currentRound < 3 && battle.player1HP > 0 && battle.player2HP > 0) {
+        battle.currentRound++;
+    } else {
+        battle.status = 'finished';
+    }
+}
+
+function calculateRewards(battle, isWin) {
+    const baseCoins = isWin ? 50 : 20;
+    const baseExp = isWin ? 25 : 10;
+    const baseArenaPoints = isWin ? 10 : 5;
+    
+    return {
+        coins: baseCoins + Math.floor(battle.player1HP / 10),
+        experience: baseExp,
+        arenaPoints: baseArenaPoints
+    };
+}
+
+function checkLevelUp(userData) {
+    const expNeeded = userData.level * 100;
+    if (userData.experience >= expNeeded) {
+        userData.level++;
+        userData.experience -= expNeeded;
+        userData.coins += userData.level * 50;
+        return true;
+    }
+    return false;
 }
 
 // Health check
@@ -211,97 +269,27 @@ app.get('/health', (req, res) => {
     res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-// Обработчик команды /start с реферальными ссылками
-bot.onText(/\/start(?: (.+))?/, (msg, match) => {
+// Обработчик команды /start
+bot.onText(/\/start/, (msg) => {
     const chatId = msg.chat.id;
-    const referralCode = match[1];
     const webAppUrl = 'https://telegram-hello-app.onrender.com';
     
     const keyboard = {
         inline_keyboard: [[
             {
-                text: '🚀 Открыть приложение',
+                text: '⚔️ Открыть PixelArena',
                 web_app: { url: webAppUrl }
             }
         ]]
     };
     
-    let message = '🎉 Добро пожаловать в EarnApp! Нажмите кнопку ниже чтобы открыть:';
-    
-    if (referralCode) {
-        message += `\n\n👥 Вы пришли по приглашению друга!`;
-        // Здесь можно обработать реферальный код
-    }
-    
-    bot.sendMessage(chatId, message, {
+    bot.sendMessage(chatId, '🎮 Добро пожаловать в PixelArena! Готовься к эпическим битвам!', {
         reply_markup: keyboard
     });
 });
 
 // Запуск сервера
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`✅ Сервер запущен на порту ${PORT}`);
+    console.log(`✅ Сервер PixelArena запущен на порту ${PORT}`);
     console.log(`🌐 Web App доступен: https://telegram-hello-app.onrender.com`);
-    
-    // Создаем несколько тестовых предметов на маркете
-    initializeTestMarketItems();
 });
-
-function initializeTestMarketItems() {
-    const testItems = [
-        {
-            id: itemIdCounter++,
-            item: { 
-                id: 1001, 
-                type: 'sticker', 
-                name: 'Стикерпак "Galaxy"', 
-                rarity: 'epic', 
-                image: '🌌', 
-                basePrice: 80 
-            },
-            sellerId: 'test_user_1',
-            sellerName: 'GalaxyTrader',
-            price: 75,
-            createdAt: new Date().toISOString(),
-            sold: false
-        },
-        {
-            id: itemIdCounter++,
-            item: { 
-                id: 1002, 
-                type: 'avatar', 
-                name: 'Анимационная рамка', 
-                rarity: 'rare', 
-                image: '✨', 
-                basePrice: 120 
-            },
-            sellerId: 'test_user_2',
-            sellerName: 'FrameMaster',
-            price: 110,
-            createdAt: new Date().toISOString(),
-            sold: false
-        },
-        {
-            id: itemIdCounter++,
-            item: { 
-                id: 1003, 
-                type: 'boost', 
-                name: 'Буст x3 на 48ч', 
-                rarity: 'legendary', 
-                image: '🚀', 
-                basePrice: 150 
-            },
-            sellerId: 'test_user_3',
-            sellerName: 'BoostSeller',
-            price: 140,
-            createdAt: new Date().toISOString(),
-            sold: false
-        }
-    ];
-    
-    testItems.forEach(item => {
-        marketItems.set(item.id, item);
-    });
-    
-    console.log('✅ Тестовые предметы добавлены на маркет');
-}
