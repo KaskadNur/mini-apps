@@ -986,4 +986,380 @@
                 userData = await response.json();
                 updateDisplay();
             } catch (error) {
-                console.error('Ошибка за
+                console.error('Ошибка загрузки данных:', error);
+                // Создаем временные данные для демонстрации
+                userData = {
+                    userId: userId,
+                    username: user?.first_name || 'Игрок',
+                    level: 1,
+                    experience: 0,
+                    coins: 100,
+                    stars: 0,
+                    energy: 10,
+                    maxEnergy: 10,
+                    arenaPoints: 1000,
+                    hero: {
+                        class: 'wanderer',
+                        health: 604,
+                        minAttack: 50,
+                        maxAttack: 60,
+                        armor: 2.8,
+                        speed: 113,
+                        critChance: 0,
+                        dodge: 0,
+                        attackSpeed: "1.5s",
+                        hasClassChangeAvailable: false
+                    },
+                    stats: {
+                        pve: { battles: 0, wins: 0, losses: 0, winStreak: 0 },
+                        pvp: { battles: 0, wins: 0, losses: 0, winStreak: 0 }
+                    },
+                    inventory: {
+                        tickets: 5,
+                        boosts: []
+                    }
+                };
+                updateDisplay();
+            }
+        }
+
+        async function loadLeaderboard() {
+            try {
+                const response = await fetch('/api/leaderboard');
+                const data = await response.json();
+                updateLeaderboard(data.leaderboard);
+            } catch (error) {
+                console.error('Ошибка загрузки рейтинга:', error);
+            }
+        }
+
+        function updateDisplay() {
+            if (!userData) return;
+
+            // Обновляем статистику
+            document.getElementById('statsLevel').textContent = userData.level;
+            document.getElementById('statsCoins').textContent = userData.coins;
+            document.getElementById('statsEnergy').textContent = `${userData.energy}/${userData.maxEnergy}`;
+            document.getElementById('statsStars').textContent = userData.stars;
+
+            // Обновляем главную страницу
+            const levelsToChange = Math.max(0, 3 - userData.level);
+            document.getElementById('levelsToClassChange').textContent = 
+                levelsToChange === 0 ? 'Доступно!' : `${levelsToChange} уровня`;
+
+            // Обновляем профиль
+            document.getElementById('profileName').textContent = userData.username;
+            document.getElementById('profileLevel').textContent = userData.level;
+            document.getElementById('profileExp').textContent = userData.experience;
+            document.getElementById('profileExpNeeded').textContent = userData.level * 100;
+            
+            // Аватар и класс
+            const classEmoji = getClassEmoji(userData.hero.class);
+            const className = getClassName(userData.hero.class);
+            document.getElementById('profileAvatar').textContent = classEmoji;
+            document.getElementById('profileClass').textContent = className;
+            
+            // Прогресс бар
+            const expPercent = (userData.experience / (userData.level * 100)) * 100;
+            document.getElementById('levelFill').style.width = `${expPercent}%`;
+
+            // Характеристики
+            document.getElementById('statHealth').textContent = userData.hero.health;
+            document.getElementById('statAttack').textContent = `${userData.hero.minAttack}-${userData.hero.maxAttack}`;
+            document.getElementById('statArmor').textContent = userData.hero.armor;
+            document.getElementById('statSpeed').textContent = userData.hero.speed;
+            document.getElementById('statCrit').textContent = `${userData.hero.critChance}%`;
+            document.getElementById('statDodge').textContent = `${userData.hero.dodge}%`;
+            document.getElementById('statAttackSpeed').textContent = userData.hero.attackSpeed;
+
+            // Статистика PVE
+            document.getElementById('pveWins').textContent = userData.stats.pve.wins;
+            document.getElementById('pveLosses').textContent = userData.stats.pve.losses;
+            document.getElementById('pveStreak').textContent = userData.stats.pve.winStreak;
+            document.getElementById('pveRating').textContent = userData.arenaPoints;
+
+            // Статистика PVP
+            document.getElementById('pvpWins').textContent = userData.stats.pvp.wins;
+            document.getElementById('pvpLosses').textContent = userData.stats.pvp.losses;
+            document.getElementById('pvpStreak').textContent = userData.stats.pvp.winStreak;
+            document.getElementById('pvpRating').textContent = userData.arenaPoints;
+
+            // Инвентарь
+            document.getElementById('profileTickets').textContent = userData.inventory.tickets;
+            document.getElementById('profileStars').textContent = userData.stars;
+
+            // Смена класса
+            const classChangeSection = document.getElementById('classChangeSection');
+            if (userData.hero.hasClassChangeAvailable) {
+                classChangeSection.style.display = 'block';
+            } else {
+                classChangeSection.style.display = 'none';
+            }
+        }
+
+        function getClassEmoji(className) {
+            const emojis = {
+                'wanderer': '🚶',
+                'warrior': '⚔️',
+                'mage': '🔮',
+                'archer': '🏹'
+            };
+            return emojis[className] || '👤';
+        }
+
+        function getClassName(className) {
+            const names = {
+                'wanderer': 'Бродяга',
+                'warrior': 'Воин',
+                'mage': 'Маг',
+                'archer': 'Лучник'
+            };
+            return names[className] || className;
+        }
+
+        function updateLeaderboard(leaderboard) {
+            const container = document.getElementById('leaderboardList');
+            
+            if (!leaderboard || leaderboard.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px 20px; opacity: 0.7;">
+                        <div style="font-size: 48px; margin-bottom: 10px;">📊</div>
+                        <div>Рейтинг пока пуст</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = leaderboard.map(player => `
+                <div class="leaderboard-item">
+                    <div class="rank ${player.rank <= 3 ? `rank-${player.rank}` : ''}">${player.rank}</div>
+                    <div class="player-info">
+                        <div class="player-name">${player.username}</div>
+                        <div class="player-stats">${getClassName(player.heroClass)} • Ур. ${player.level}</div>
+                    </div>
+                    <div class="player-score">${player.arenaPoints}</div>
+                </div>
+            `).join('');
+
+            // Обновляем позицию игрока
+            const playerRank = leaderboard.findIndex(p => p.username === userData.username) + 1;
+            document.getElementById('playerRank').textContent = playerRank ? `#${playerRank}` : '#-';
+            document.getElementById('playerRankPoints').textContent = `${userData.arenaPoints} очков арены`;
+        }
+
+        function switchTab(tabName) {
+            // Скрываем все вкладки
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Убираем активный класс у всех кнопок
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Показываем выбранную вкладку
+            document.getElementById('tab-' + tabName).classList.add('active');
+            
+            // Активируем кнопку
+            event.currentTarget.classList.add('active');
+            
+            // Обновляем заголовок
+            const titles = {
+                'home': 'Главная',
+                'shop': 'Магазин', 
+                'market': 'Маркет',
+                'ranking': 'Рейтинг',
+                'profile': 'Профиль'
+            };
+            document.getElementById('currentTabTitle').textContent = titles[tabName];
+        }
+
+        async function startBattle(battleType, difficulty) {
+            try {
+                if (userData.energy < 1) {
+                    showNotification('❌ Недостаточно энергии!');
+                    return;
+                }
+
+                const response = await fetch('/api/battle/start', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: userId,
+                        battleType: battleType,
+                        difficulty: difficulty
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    userData = result.user;
+                    showBattleResult(result.battle, result.result, result.rewards, result.leveledUp);
+                    updateDisplay();
+                } else {
+                    showNotification('❌ Ошибка начала боя: ' + result.error);
+                }
+            } catch (error) {
+                console.error('Ошибка начала боя:', error);
+                showNotification('❌ Ошибка начала боя');
+            }
+        }
+
+        function showBattleResult(battle, result, rewards, leveledUp) {
+            const modal = document.getElementById('battleResultModal');
+            const content = document.getElementById('battleResultContent');
+            
+            let resultHTML = `
+                <div style="text-align: center; margin-bottom: 15px;">
+                    <div style="font-size: 24px; font-weight: bold; color: ${result.win ? '#10b981' : '#ef4444'};">
+                        ${result.win ? '🎉 ПОБЕДА!' : '💀 ПОРАЖЕНИЕ'}
+                    </div>
+                    ${leveledUp ? '<div style="color: gold; font-weight: bold; margin: 10px 0;">⭐ Уровень повышен!</div>' : ''}
+                </div>
+                
+                <div style="margin: 15px 0;">
+                    <div style="display: flex; justify-content: space-around; margin-bottom: 10px;">
+                        <div>
+                            <div style="font-size: 12px; opacity: 0.8;">Монеты</div>
+                            <div style="font-size: 18px; font-weight: bold; color: gold;">+${rewards.coins}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; opacity: 0.8;">Опыт</div>
+                            <div style="font-size: 18px; font-weight: bold; color: #10b981;">+${rewards.experience}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; opacity: 0.8;">Очки арены</div>
+                            <div style="font-size: 18px; font-weight: bold; color: var(--accent-secondary);">+${rewards.arenaPoints}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Лог боя
+            if (result.rounds && result.rounds.length > 0) {
+                resultHTML += `<div class="battle-log">`;
+                result.rounds.forEach(round => {
+                    resultHTML += `
+                        <div class="battle-round">
+                            <div class="round-number">Раунд ${round.round}</div>
+                            <div class="damage-player">💥 Вы нанесли: ${round.playerDamage} урона</div>
+                            <div class="damage-enemy">💢 Получили: ${round.enemyDamage} урона</div>
+                            <div style="font-size: 10px; opacity: 0.7;">
+                                HP: ${round.playerHP} / ${round.finalEnemyHP > 0 ? round.enemyHP : '💀'}
+                            </div>
+                        </div>
+                    `;
+                });
+                resultHTML += `</div>`;
+            }
+
+            resultHTML += `
+                <button class="btn btn-primary" onclick="closeBattleResult()" style="margin-top: 15px;">
+                    👍 Понятно
+                </button>
+            `;
+
+            content.innerHTML = resultHTML;
+            modal.style.display = 'block';
+        }
+
+        function closeBattleResult() {
+            document.getElementById('battleResultModal').style.display = 'none';
+        }
+
+        function showClassChangeModal() {
+            if (!userData.hero.hasClassChangeAvailable) {
+                showNotification('❌ Смена класса пока недоступна');
+                return;
+            }
+            document.getElementById('classChangeModal').style.display = 'block';
+        }
+
+        function closeClassChangeModal() {
+            document.getElementById('classChangeModal').style.display = 'none';
+            selectedClass = null;
+            document.getElementById('confirmClassChange').disabled = true;
+            // Сбрасываем выделение
+            document.querySelectorAll('.class-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+        }
+
+        function selectClass(className) {
+            selectedClass = className;
+            document.getElementById('confirmClassChange').disabled = false;
+            
+            // Обновляем выделение
+            document.querySelectorAll('.class-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+        }
+
+        async function confirmClassChange() {
+            if (!selectedClass) return;
+
+            try {
+                const response = await fetch('/api/user/change-class', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: userId,
+                        newClass: selectedClass
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    userData = result.user;
+                    updateDisplay();
+                    closeClassChangeModal();
+                    showNotification(`✅ Класс изменен на ${getClassName(selectedClass)}!`);
+                } else {
+                    showNotification('❌ Ошибка: ' + result.error);
+                }
+            } catch (error) {
+                console.error('Ошибка смены класса:', error);
+                showNotification('❌ Ошибка смены класса');
+            }
+        }
+
+        async function buyItem(itemId, currency) {
+            try {
+                const response = await fetch('/api/shop/purchase', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: userId,
+                        itemId: itemId,
+                        currency: currency
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    userData = result.user;
+                    updateDisplay();
+                    showNotification(`✅ ${result.item.name} куплен!`);
+                } else {
+                    showNotification('❌ Ошибка покупки: ' + result.error);
+                }
+            } catch (error) {
+                console.error('Ошибка покупки:', error);
+                showNotification('❌ Ошибка покупки');
+            }
+        }
+
+        function showNotification(message) {
+            // В реальном приложении можно использовать Telegram WebApp.showPopup
+            alert(message);
+        }
+
+        console.log('PixelArena инициализирована! Готов к битвам! ⚔️');
+    </script>
+</body>
+</html>
