@@ -185,111 +185,132 @@
             font-size: 12px;
         }
         
-        /* Боевая арена */
-        .battle-arena {
-            background: var(--bg-secondary);
-            border: 3px solid var(--accent-primary);
-            border-radius: 10px;
-            padding: 15px;
-            margin: 15px 0;
-            position: relative;
-        }
-        
-        .fighters-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 20px 0;
-        }
-        
-        .fighter {
+        /* Профиль */
+        .hero-card {
             text-align: center;
-            flex: 1;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
         }
         
-        .fighter-avatar {
-            width: 80px;
-            height: 80px;
+        .hero-avatar {
+            width: 100px;
+            height: 100px;
             background: var(--card-bg);
-            border: 3px solid var(--border-color);
-            border-radius: 8px;
-            margin: 0 auto 10px;
+            border: 4px solid var(--accent-secondary);
+            border-radius: 10px;
+            margin: 0 auto 15px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 32px;
+            font-size: 48px;
         }
         
-        .health-bar {
-            width: 100%;
-            height: 8px;
+        .hero-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .hero-class {
+            font-size: 14px;
+            color: var(--accent-secondary);
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .change-class-btn {
+            background: var(--accent-secondary);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 10px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .level-bar {
             background: #333;
-            border-radius: 4px;
+            border-radius: 10px;
+            height: 8px;
+            margin: 10px 0;
             overflow: hidden;
-            margin: 5px 0;
         }
         
-        .health-fill {
+        .level-fill {
+            background: var(--accent-secondary);
             height: 100%;
-            background: linear-gradient(90deg, #ef4444, #10b981);
             transition: width 0.3s ease;
         }
         
-        .energy-container {
-            display: flex;
-            justify-content: center;
-            gap: 4px;
-            margin: 5px 0;
+        /* Статистика */
+        .stats-section {
+            margin-bottom: 15px;
         }
         
-        .energy-point {
-            width: 12px;
-            height: 12px;
-            background: var(--accent-secondary);
-            border-radius: 50%;
-            border: 1px solid var(--border-color);
+        .stats-section-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--accent-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 5px;
         }
         
-        .energy-point.empty {
-            background: #333;
-        }
-        
-        .battle-actions {
+        .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 8px;
-            margin-top: 15px;
         }
         
-        .action-btn {
-            background: var(--accent-primary);
-            border: 2px solid var(--border-color);
+        .stat-card {
+            background: var(--card-bg);
+            padding: 10px;
             border-radius: 6px;
-            padding: 12px;
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
-        }
-        
-        .action-btn:hover {
-            background: var(--accent-secondary);
-            transform: scale(1.05);
-        }
-        
-        .action-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .round-info {
             text-align: center;
-            font-size: 14px;
-            margin: 10px 0;
-            color: var(--accent-secondary);
+        }
+        
+        .stat-card .value {
+            font-size: 16px;
             font-weight: bold;
+            color: var(--accent-secondary);
+            margin-bottom: 4px;
+        }
+        
+        .stat-card .label {
+            font-size: 10px;
+            opacity: 0.8;
+        }
+        
+        /* Характеристики */
+        .stats-large-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .stat-large {
+            background: var(--card-bg);
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        
+        .stat-large .value {
+            font-size: 18px;
+            font-weight: bold;
+            color: gold;
+            margin-bottom: 4px;
+        }
+        
+        .stat-large .label {
+            font-size: 11px;
+            opacity: 0.8;
         }
         
         /* Магазин */
@@ -323,55 +344,6 @@
             color: var(--accent-secondary);
             font-weight: bold;
             font-size: 12px;
-        }
-        
-        /* Профиль */
-        .hero-card {
-            text-align: center;
-            background: var(--bg-secondary);
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 15px;
-        }
-        
-        .hero-avatar {
-            width: 100px;
-            height: 100px;
-            background: var(--card-bg);
-            border: 4px solid var(--accent-secondary);
-            border-radius: 10px;
-            margin: 0 auto 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 48px;
-        }
-        
-        .hero-stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin: 15px 0;
-        }
-        
-        .hero-stat {
-            background: var(--card-bg);
-            padding: 10px;
-            border-radius: 6px;
-            text-align: center;
-        }
-        
-        .stat-name {
-            font-size: 10px;
-            opacity: 0.8;
-            margin-bottom: 4px;
-        }
-        
-        .stat-value {
-            font-size: 14px;
-            font-weight: bold;
-            color: var(--accent-secondary);
         }
         
         /* Рейтинг */
@@ -428,6 +400,48 @@
             color: var(--accent-secondary);
         }
         
+        /* Маркет */
+        .market-items {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        
+        .market-item {
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .market-item-icon {
+            font-size: 32px;
+            width: 50px;
+            text-align: center;
+        }
+        
+        .market-item-info {
+            flex: 1;
+        }
+        
+        .market-item-name {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        
+        .market-item-desc {
+            font-size: 10px;
+            opacity: 0.8;
+        }
+        
+        .market-item-price {
+            font-weight: bold;
+            color: var(--accent-secondary);
+        }
+        
         /* Модальные окна */
         .modal {
             display: none;
@@ -471,33 +485,74 @@
             cursor: pointer;
         }
         
-        /* Анимации */
-        @keyframes damage {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
+        .class-options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin: 15px 0;
         }
         
-        .damage-animation {
-            animation: damage 0.3s ease;
+        .class-option {
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
         }
         
-        .victory-text {
+        .class-option:hover {
+            border-color: var(--accent-secondary);
+            transform: translateY(-2px);
+        }
+        
+        .class-option.selected {
+            border-color: gold;
+            background: rgba(255, 215, 0, 0.1);
+        }
+        
+        .class-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+        
+        .class-stats {
+            font-size: 10px;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+        
+        /* Боевые результаты */
+        .battle-log {
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            padding: 12px;
+            margin: 10px 0;
+            max-height: 200px;
+            overflow-y: auto;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+        
+        .battle-round {
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .round-number {
+            font-weight: bold;
             color: var(--accent-secondary);
-            font-size: 24px;
-            font-weight: bold;
-            text-align: center;
-            text-shadow: 2px 2px 0 #000;
-            margin: 10px 0;
+            margin-bottom: 4px;
         }
         
-        .defeat-text {
-            color: #6b7280;
-            font-size: 24px;
-            font-weight: bold;
-            text-align: center;
-            text-shadow: 2px 2px 0 #000;
-            margin: 10px 0;
+        .damage-player {
+            color: #10b981;
+        }
+        
+        .damage-enemy {
+            color: #ef4444;
         }
     </style>
 </head>
@@ -505,7 +560,7 @@
     <div class="container">
         <div class="header">
             <h1>PIXEL ARENA</h1>
-            <div class="subtitle" id="currentTabTitle">Главное меню</div>
+            <div class="subtitle" id="currentTabTitle">Главная</div>
         </div>
         
         <!-- Статистика -->
@@ -528,45 +583,29 @@
             </div>
         </div>
         
-        <!-- Вкладка Главное меню -->
+        <!-- Вкладка Главная -->
         <div id="tab-home" class="tab-content active">
             <div class="card">
                 <h3 style="text-align: center; margin-bottom: 15px; color: var(--accent-secondary);">⚔️ ДОБРО ПОЖАЛОВАТЬ В АРЕНУ!</h3>
                 <p style="text-align: center; margin-bottom: 20px; font-size: 14px; opacity: 0.9;">
-                    Сражайся, побеждай и становись легендой PixelArena!
+                    Начни как <strong>Бродяга</strong> и стань легендой!
                 </p>
             </div>
             
             <div class="card">
                 <h3 style="margin-bottom: 15px;">🎮 БЫСТРЫЙ СТАРТ</h3>
-                <button class="btn btn-primary" onclick="startQuickBattle()">
-                    ⚡ Быстрый бой
+                <button class="btn btn-primary" onclick="startBattle('pve', 'easy')">
+                    🟢 Легкий бой (PVE)
                 </button>
-                <button class="btn" onclick="switchTab('battle')">
-                    ⚔️ Выбор противника
+                <button class="btn" onclick="startBattle('pve', 'medium')">
+                    🟡 Средний бой (PVE)
                 </button>
-            </div>
-            
-            <div class="card">
-                <h3 style="margin-bottom: 15px;">📊 ВАША СТАТИСТИКА</h3>
-                <div class="hero-stats">
-                    <div class="hero-stat">
-                        <div class="stat-name">ПОБЕДЫ</div>
-                        <div class="stat-value" id="homeWins">0</div>
-                    </div>
-                    <div class="hero-stat">
-                        <div class="stat-name">ПОРАЖЕНИЯ</div>
-                        <div class="stat-value" id="homeLosses">0</div>
-                    </div>
-                    <div class="hero-stat">
-                        <div class="stat-name">СЕРИЯ ПОБЕД</div>
-                        <div class="stat-value" id="homeStreak">0</div>
-                    </div>
-                    <div class="hero-stat">
-                        <div class="stat-name">ОЧКИ АРЕНЫ</div>
-                        <div class="stat-value" id="homeArenaPoints">0</div>
-                    </div>
-                </div>
+                <button class="btn" onclick="startBattle('pve', 'hard')">
+                    🔴 Сложный бой (PVE)
+                </button>
+                <button class="btn btn-warning" onclick="startBattle('pvp', 'medium')" style="margin-top: 10px;">
+                    ⚔️ PVP Бой
+                </button>
             </div>
             
             <div class="card">
@@ -578,106 +617,13 @@
                     📈 Смотреть рейтинг
                 </button>
             </div>
-        </div>
-        
-        <!-- Вкладка Бой -->
-        <div id="tab-battle" class="tab-content">
-            <div class="card">
-                <h3 style="text-align: center; margin-bottom: 15px; color: var(--accent-secondary);">⚔️ ВЫБОР ПРОТИВНИКА</h3>
-            </div>
             
             <div class="card">
-                <h3 style="margin-bottom: 15px;">🤖 БОТЫ</h3>
-                <button class="btn" onclick="startBotBattle('easy')">
-                    🟢 Новичок (Уровень 1-5)
-                </button>
-                <button class="btn" onclick="startBotBattle('medium')">
-                    🟡 Опытный (Уровень 6-15)
-                </button>
-                <button class="btn" onclick="startBotBattle('hard')">
-                    🔴 Мастер (Уровень 16+)
-                </button>
-            </div>
-            
-            <div class="card">
-                <h3 style="margin-bottom: 15px;">👥 ИГРОКИ</h3>
-                <button class="btn btn-primary" onclick="findPlayerBattle()">
-                    🔍 Найти противника
-                </button>
-                <button class="btn" onclick="challengeFriend()">
-                    👋 Вызвать друга
-                </button>
-            </div>
-            
-            <div class="card">
-                <h3 style="margin-bottom: 15px;">🎫 БИЛЕТЫ НА БОЙ</h3>
+                <h3 style="margin-bottom: 15px;">🚀 ПРОГРЕСС</h3>
                 <div style="text-align: center; padding: 15px; background: var(--card-bg); border-radius: 6px;">
-                    <div style="font-size: 18px; font-weight: bold; color: var(--accent-secondary);" id="battleTickets">3</div>
-                    <div style="font-size: 12px; opacity: 0.8;">Билетов осталось</div>
-                </div>
-                <button class="btn btn-warning btn-small" onclick="buyTickets()" style="margin-top: 10px;">
-                    💰 Купить билеты (10 ⭐)
-                </button>
-            </div>
-        </div>
-        
-        <!-- Вкладка Арена (активный бой) -->
-        <div id="tab-arena" class="tab-content">
-            <div class="battle-arena">
-                <div class="round-info" id="roundInfo">РАУНД 1 ИЗ 3</div>
-                
-                <div class="fighters-container">
-                    <div class="fighter">
-                        <div class="fighter-avatar" id="playerAvatar">⚔️</div>
-                        <div class="fighter-name" id="playerName">ИГРОК</div>
-                        <div class="health-bar">
-                            <div class="health-fill" id="playerHealth" style="width: 100%;"></div>
-                        </div>
-                        <div class="energy-container" id="playerEnergy">
-                            <div class="energy-point"></div>
-                            <div class="energy-point"></div>
-                            <div class="energy-point"></div>
-                        </div>
-                        <div class="fighter-hp" id="playerHP">100/100</div>
-                    </div>
-                    
-                    <div style="font-size: 24px; margin: 0 10px;">VS</div>
-                    
-                    <div class="fighter">
-                        <div class="fighter-avatar" id="enemyAvatar">🤖</div>
-                        <div class="fighter-name" id="enemyName">ПРОТИВНИК</div>
-                        <div class="health-bar">
-                            <div class="health-fill" id="enemyHealth" style="width: 100%;"></div>
-                        </div>
-                        <div class="energy-container" id="enemyEnergy">
-                            <div class="energy-point"></div>
-                            <div class="energy-point"></div>
-                            <div class="energy-point"></div>
-                        </div>
-                        <div class="fighter-hp" id="enemyHP">100/100</div>
-                    </div>
-                </div>
-                
-                <div class="battle-actions">
-                    <button class="action-btn" onclick="makeMove('attack')" style="background: #ef4444;">
-                        ⚔️ АТАКА
-                    </button>
-                    <button class="action-btn" onclick="makeMove('defend')" style="background: #3b82f6;">
-                        🛡️ ЗАЩИТА
-                    </button>
-                    <button class="action-btn" onclick="makeMove('special')" style="background: #8b5cf6;">
-                        ✨ СУПЕР-УДАР
-                    </button>
-                    <button class="action-btn" onclick="surrenderBattle()" style="background: #6b7280;">
-                        🏳️ СДАЧА
-                    </button>
-                </div>
-            </div>
-            
-            <div class="card">
-                <h3 style="margin-bottom: 10px;">📝 ЛОГ БОЯ</h3>
-                <div id="battleLog" style="font-size: 12px; line-height: 1.4; max-height: 150px; overflow-y: auto;">
-                    <!-- Лог боя будет добавляться здесь -->
+                    <div style="font-size: 14px; margin-bottom: 8px;">До смены класса:</div>
+                    <div style="font-size: 18px; font-weight: bold; color: var(--accent-secondary);" id="levelsToClassChange">2 уровня</div>
+                    <div style="font-size: 10px; opacity: 0.8; margin-top: 4px;">На 3 уровне откроются новые классы</div>
                 </div>
             </div>
         </div>
@@ -691,25 +637,15 @@
             <div class="card">
                 <h3 style="margin-bottom: 15px;">💎 ПРЕДМЕТЫ ЗА STARS</h3>
                 <div class="shop-items">
-                    <div class="shop-item" onclick="buyItem('ticket_pack')">
+                    <div class="shop-item" onclick="buyItem('ticket_pack', 'stars')">
                         <div class="shop-item-icon">🎫</div>
                         <div class="shop-item-name">5 билетов</div>
                         <div class="shop-item-price">10 ⭐</div>
                     </div>
-                    <div class="shop-item" onclick="buyItem('energy_refill')">
+                    <div class="shop-item" onclick="buyItem('energy_refill', 'stars')">
                         <div class="shop-item-icon">⚡</div>
                         <div class="shop-item-name">Энергия</div>
                         <div class="shop-item-price">5 ⭐</div>
-                    </div>
-                    <div class="shop-item" onclick="buyItem('warrior_skin')">
-                        <div class="shop-item-icon">🛡️</div>
-                        <div class="shop-item-name">Скин воина</div>
-                        <div class="shop-item-price">50 ⭐</div>
-                    </div>
-                    <div class="shop-item" onclick="buyItem('mage_skin')">
-                        <div class="shop-item-icon">🔮</div>
-                        <div class="shop-item-name">Скин мага</div>
-                        <div class="shop-item-price">50 ⭐</div>
                     </div>
                 </div>
             </div>
@@ -717,26 +653,56 @@
             <div class="card">
                 <h3 style="margin-bottom: 15px;">🪙 ПРЕДМЕТЫ ЗА МОНЕТЫ</h3>
                 <div class="shop-items">
-                    <div class="shop-item" onclick="buyItem('small_boost')">
+                    <div class="shop-item" onclick="buyItem('attack_boost', 'coins')">
                         <div class="shop-item-icon">💪</div>
                         <div class="shop-item-name">Буст атаки</div>
-                        <div class="shop-item-price">100 🪙</div>
-                    </div>
-                    <div class="shop-item" onclick="buyItem('health_potion')">
-                        <div class="shop-item-icon">❤️</div>
-                        <div class="shop-item-name">Зелье здоровья</div>
-                        <div class="shop-item-price">80 🪙</div>
-                    </div>
-                    <div class="shop-item" onclick="buyItem('lucky_charm')">
-                        <div class="shop-item-icon">🍀</div>
-                        <div class="shop-item-name">Талисман удачи</div>
                         <div class="shop-item-price">150 🪙</div>
                     </div>
-                    <div class="shop-item" onclick="buyItem('exp_boost')">
-                        <div class="shop-item-icon">📈</div>
-                        <div class="shop-item-name">Буст опыта</div>
-                        <div class="shop-item-price">120 🪙</div>
+                    <div class="shop-item" onclick="buyItem('ticket_pack', 'coins')">
+                        <div class="shop-item-icon">🎫</div>
+                        <div class="shop-item-name">5 билетов</div>
+                        <div class="shop-item-price">200 🪙</div>
                     </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Вкладка Маркет -->
+        <div id="tab-market" class="tab-content">
+            <div class="card">
+                <h3 style="text-align: center; margin-bottom: 15px; color: var(--accent-secondary);">🏪 МАРКЕТ</h3>
+                <p style="text-align: center; margin-bottom: 15px; font-size: 12px; opacity: 0.8;">
+                    Торговая площадка скоро откроется!
+                </p>
+            </div>
+            
+            <div class="card">
+                <h3 style="margin-bottom: 15px;">🔄 ОБМЕН ПРЕДМЕТАМИ</h3>
+                <div class="market-items">
+                    <div class="market-item">
+                        <div class="market-item-icon">⚔️</div>
+                        <div class="market-item-info">
+                            <div class="market-item-name">Легендарный меч</div>
+                            <div class="market-item-desc">Продавец: DragonSlayer</div>
+                        </div>
+                        <div class="market-item-price">500 ⭐</div>
+                    </div>
+                    <div class="market-item">
+                        <div class="market-item-icon">🔮</div>
+                        <div class="market-item-info">
+                            <div class="market-item-name">Магический артефакт</div>
+                            <div class="market-item-desc">Продавец: MageMaster</div>
+                        </div>
+                        <div class="market-item-price">300 ⭐</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 style="margin-bottom: 15px;">📊 СТАТИСТИКА МАРКЕТА</h3>
+                <div style="text-align: center; padding: 20px;">
+                    <div style="font-size: 48px; margin-bottom: 10px;">🚧</div>
+                    <div style="font-size: 14px; opacity: 0.8;">Раздел в разработке</div>
                 </div>
             </div>
         </div>
@@ -750,54 +716,15 @@
                 </p>
             </div>
             
-            <div class="leaderboard">
-                <div class="leaderboard-item">
-                    <div class="rank rank-1">1</div>
-                    <div class="player-info">
-                        <div class="player-name">DragonSlayer</div>
-                        <div class="player-stats">Уровень 25 • 89 побед</div>
-                    </div>
-                    <div class="player-score">2450</div>
-                </div>
-                <div class="leaderboard-item">
-                    <div class="rank rank-2">2</div>
-                    <div class="player-info">
-                        <div class="player-name">ShadowNinja</div>
-                        <div class="player-stats">Уровень 23 • 76 побед</div>
-                    </div>
-                    <div class="player-score">2310</div>
-                </div>
-                <div class="leaderboard-item">
-                    <div class="rank rank-3">3</div>
-                    <div class="player-info">
-                        <div class="player-name">MageMaster</div>
-                        <div class="player-stats">Уровень 22 • 81 победа</div>
-                    </div>
-                    <div class="player-score">2285</div>
-                </div>
-                <div class="leaderboard-item">
-                    <div class="rank">4</div>
-                    <div class="player-info">
-                        <div class="player-name">ArenaChamp</div>
-                        <div class="player-stats">Уровень 21 • 67 побед</div>
-                    </div>
-                    <div class="player-score">2150</div>
-                </div>
-                <div class="leaderboard-item">
-                    <div class="rank">5</div>
-                    <div class="player-info">
-                        <div class="player-name">PixelWarrior</div>
-                        <div class="player-stats">Уровень 20 • 59 побед</div>
-                    </div>
-                    <div class="player-score">1980</div>
-                </div>
+            <div class="leaderboard" id="leaderboardList">
+                <!-- Рейтинг будет загружен через JS -->
             </div>
             
             <div class="card" style="margin-top: 15px;">
                 <h3 style="margin-bottom: 10px;">🎯 ВАША ПОЗИЦИЯ</h3>
                 <div style="text-align: center; padding: 15px; background: var(--card-bg); border-radius: 6px;">
-                    <div style="font-size: 24px; font-weight: bold; color: var(--accent-secondary);">#127</div>
-                    <div style="font-size: 14px; opacity: 0.8;" id="playerRankInfo">0 очков арены</div>
+                    <div style="font-size: 24px; font-weight: bold; color: var(--accent-secondary);" id="playerRank">#0</div>
+                    <div style="font-size: 14px; opacity: 0.8;" id="playerRankPoints">0 очков арены</div>
                 </div>
             </div>
         </div>
@@ -805,34 +732,101 @@
         <!-- Вкладка Профиль -->
         <div id="tab-profile" class="tab-content">
             <div class="hero-card">
-                <div class="hero-avatar" id="profileAvatar">⚔️</div>
-                <div class="hero-name" style="font-size: 18px; font-weight: bold; margin-bottom: 5px;" id="profileName">ИГРОК</div>
-                <div class="hero-class" style="font-size: 14px; opacity: 0.8; margin-bottom: 15px;" id="profileClass">Воин</div>
-                
-                <div class="level-bar" style="background: #333; border-radius: 10px; height: 8px; margin: 10px 0; overflow: hidden;">
-                    <div class="level-fill" style="background: var(--accent-secondary); height: 100%; width: 25%;"></div>
+                <div class="hero-avatar" id="profileAvatar">🚶</div>
+                <div class="hero-name" id="profileName">ИГРОК</div>
+                <div class="hero-class" id="profileClass">Бродяга</div>
+                <div id="classChangeSection" style="display: none;">
+                    <button class="change-class-btn" onclick="showClassChangeModal()">
+                        ✨ Сменить класс
+                    </button>
                 </div>
-                <div style="font-size: 12px; opacity: 0.8;">Уровень <span id="profileLevel">1</span> • <span id="profileExp">25</span>/100 XP</div>
+                
+                <div class="level-bar">
+                    <div class="level-fill" id="levelFill" style="width: 0%;"></div>
+                </div>
+                <div style="font-size: 12px; opacity: 0.8;">
+                    Уровень <span id="profileLevel">1</span> • 
+                    <span id="profileExp">0</span>/<span id="profileExpNeeded">100</span> XP
+                </div>
             </div>
             
             <div class="card">
                 <h3 style="margin-bottom: 15px;">📊 ХАРАКТЕРИСТИКИ</h3>
-                <div class="hero-stats">
-                    <div class="hero-stat">
-                        <div class="stat-name">ЗДОРОВЬЕ</div>
-                        <div class="stat-value" id="profileHealth">100</div>
+                <div class="stats-large-grid">
+                    <div class="stat-large">
+                        <div class="value" id="statHealth">604</div>
+                        <div class="label">Здоровье</div>
                     </div>
-                    <div class="hero-stat">
-                        <div class="stat-name">АТАКА</div>
-                        <div class="stat-value" id="profileAttack">10</div>
+                    <div class="stat-large">
+                        <div class="value" id="statAttack">50-60</div>
+                        <div class="label">Атака</div>
                     </div>
-                    <div class="hero-stat">
-                        <div class="stat-name">ЗАЩИТА</div>
-                        <div class="stat-value" id="profileDefense">5</div>
+                    <div class="stat-large">
+                        <div class="value" id="statArmor">2.8</div>
+                        <div class="label">Броня</div>
                     </div>
-                    <div class="hero-stat">
-                        <div class="stat-name">СКОРОСТЬ</div>
-                        <div class="stat-value" id="profileSpeed">8</div>
+                    <div class="stat-large">
+                        <div class="value" id="statSpeed">113</div>
+                        <div class="label">Скорость</div>
+                    </div>
+                    <div class="stat-large">
+                        <div class="value" id="statCrit">0%</div>
+                        <div class="label">Крит. шанс</div>
+                    </div>
+                    <div class="stat-large">
+                        <div class="value" id="statDodge">0%</div>
+                        <div class="label">Уклонение</div>
+                    </div>
+                </div>
+                <div style="text-align: center; font-size: 10px; opacity: 0.7; margin-top: 8px;">
+                    Скорость атаки: <span id="statAttackSpeed">1.5s</span>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 style="margin-bottom: 15px;">📈 СТАТИСТИКА БОЕВ</h3>
+                
+                <div class="stats-section">
+                    <div class="stats-section-title">PVE</div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="value" id="pveWins">0</div>
+                            <div class="label">Победы</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="value" id="pveLosses">0</div>
+                            <div class="label">Поражения</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="value" id="pveStreak">0</div>
+                            <div class="label">Серия Побед</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="value" id="pveRating">0</div>
+                            <div class="label">Очки Рейтинга</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stats-section">
+                    <div class="stats-section-title">PVP</div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="value" id="pvpWins">0</div>
+                            <div class="label">Победы</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="value" id="pvpLosses">0</div>
+                            <div class="label">Поражения</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="value" id="pvpStreak">0</div>
+                            <div class="label">Серия Побед</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="value" id="pvpRating">0</div>
+                            <div class="label">Очки Рейтинга</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -843,38 +837,84 @@
                     <div style="background: var(--card-bg); padding: 10px; border-radius: 6px; text-align: center;">
                         <div style="font-size: 20px;">🎫</div>
                         <div style="font-size: 10px;">Билеты</div>
-                        <div style="font-size: 12px; font-weight: bold;" id="profileTickets">3</div>
+                        <div style="font-size: 12px; font-weight: bold;" id="profileTickets">5</div>
                     </div>
                     <div style="background: var(--card-bg); padding: 10px; border-radius: 6px; text-align: center;">
                         <div style="font-size: 20px;">💪</div>
                         <div style="font-size: 10px;">Бусты</div>
-                        <div style="font-size: 12px; font-weight: bold;">2</div>
+                        <div style="font-size: 12px; font-weight: bold;">0</div>
                     </div>
                     <div style="background: var(--card-bg); padding: 10px; border-radius: 6px; text-align: center;">
-                        <div style="font-size: 20px;">❤️</div>
-                        <div style="font-size: 10px;">Зелья</div>
-                        <div style="font-size: 12px; font-weight: bold;">1</div>
+                        <div style="font-size: 20px;">⭐</div>
+                        <div style="font-size: 10px;">Stars</div>
+                        <div style="font-size: 12px; font-weight: bold;" id="profileStars">0</div>
                     </div>
                     <div style="background: var(--card-bg); padding: 10px; border-radius: 6px; text-align: center;">
                         <div style="font-size: 20px;">👕</div>
                         <div style="font-size: 10px;">Скины</div>
-                        <div style="font-size: 12px; font-weight: bold;">3</div>
+                        <div style="font-size: 12px; font-weight: bold;">1</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Модальное окно смены класса -->
+    <div id="classChangeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>✨ Смена класса</h3>
+                <button class="modal-close" onclick="closeClassChangeModal()">×</button>
+            </div>
+            
+            <p style="text-align: center; margin-bottom: 15px; font-size: 12px; opacity: 0.8;">
+                Выбери свой путь! Каждый класс имеет уникальные характеристики.
+            </p>
+            
+            <div class="class-options">
+                <div class="class-option" onclick="selectClass('warrior')">
+                    <div class="class-icon">⚔️</div>
+                    <div style="font-weight: bold; margin-bottom: 5px;">Воин</div>
+                    <div class="class-stats">
+                        ❤️ +8% Здоровье<br>
+                        💪 +3% Атака<br>
+                        🛡️ +5% Броня<br>
+                        ⚡ +4% Скорость<br>
+                        🎯 2% Крит<br>
+                        🌀 3% Уклонение
+                    </div>
+                </div>
+                
+                <div class="class-option" onclick="selectClass('mage')">
+                    <div class="class-icon">🔮</div>
+                    <div style="font-weight: bold; margin-bottom: 5px;">Маг</div>
+                    <div class="class-stats">
+                        ❤️ +3% Здоровье<br>
+                        💪 +10% Атака<br>
+                        🛡️ +2% Броня<br>
+                        ⚡ +3% Скорость<br>
+                        🎯 5% Крит<br>
+                        🌀 0% Уклонение
+                    </div>
+                </div>
+                
+                <div class="class-option" onclick="selectClass('archer')">
+                    <div class="class-icon">🏹</div>
+                    <div style="font-weight: bold; margin-bottom: 5px;">Лучник</div>
+                    <div class="class-stats">
+                        ❤️ +2% Здоровье<br>
+                        💪 +6% Атака<br>
+                        🛡️ +2% Броня<br>
+                        ⚡ +10% Скорость<br>
+                        🎯 0% Крит<br>
+                        🌀 5% Уклонение
                     </div>
                 </div>
             </div>
             
-            <div class="card">
-                <h3 style="margin-bottom: 15px;">⚙️ НАСТРОЙКИ</h3>
-                <button class="btn btn-secondary" onclick="changeHeroClass()">
-                    🛡️ Сменить класс
-                </button>
-                <button class="btn btn-secondary" onclick="showAchievements()">
-                    🏆 Достижения
-                </button>
-                <button class="btn btn-secondary" onclick="showSettings()">
-                    ⚙️ Настройки
-                </button>
-            </div>
+            <button class="btn btn-primary" id="confirmClassChange" onclick="confirmClassChange()" disabled>
+                ✅ Подтвердить выбор
+            </button>
         </div>
     </div>
     
@@ -886,13 +926,9 @@
                 <button class="modal-close" onclick="closeBattleResult()">×</button>
             </div>
             
-            <div id="battleResultContent" style="text-align: center;">
+            <div id="battleResultContent">
                 <!-- Содержимое будет заполнено JavaScript -->
             </div>
-            
-            <button class="btn btn-primary" onclick="closeBattleResult()" style="margin-top: 15px;">
-                👍 ПОНЯТНО
-            </button>
         </div>
     </div>
     
@@ -902,13 +938,13 @@
             <i>🏠</i>
             Главная
         </button>
-        <button class="tab-button" onclick="switchTab('battle')">
-            <i>⚔️</i>
-            Бой
-        </button>
         <button class="tab-button" onclick="switchTab('shop')">
             <i>🛍️</i>
             Магазин
+        </button>
+        <button class="tab-button" onclick="switchTab('market')">
+            <i>🏪</i>
+            Маркет
         </button>
         <button class="tab-button" onclick="switchTab('ranking')">
             <i>🏆</i>
@@ -924,7 +960,7 @@
         // Глобальные переменные
         let userId = null;
         let userData = {};
-        let currentBattle = null;
+        let selectedClass = null;
         const tg = window.Telegram.WebApp;
 
         // Инициализация приложения
@@ -940,431 +976,14 @@
 
         async function initializeApp() {
             await loadUserData();
+            await loadLeaderboard();
             updateDisplay();
         }
 
         async function loadUserData() {
             try {
-                // В реальном приложении здесь будет запрос к API
-                userData = {
-                    userId: userId,
-                    username: user?.first_name || 'Игрок',
-                    level: 5,
-                    experience: 25,
-                    coins: 350,
-                    stars: 15,
-                    energy: 8,
-                    maxEnergy: 10,
-                    arenaPoints: 1250,
-                    hero: {
-                        class: 'warrior',
-                        health: 100,
-                        attack: 12,
-                        defense: 8,
-                        speed: 10,
-                        skills: ['basic_attack', 'power_strike']
-                    },
-                    inventory: {
-                        tickets: 3,
-                        boosts: ['attack_boost', 'health_potion'],
-                        skins: ['default', 'warrior_gold']
-                    },
-                    stats: {
-                        battles: 27,
-                        wins: 15,
-                        losses: 12,
-                        winStreak: 3
-                    }
-                };
-                
+                const response = await fetch(`/api/user/${userId}`);
+                userData = await response.json();
                 updateDisplay();
             } catch (error) {
-                console.error('Ошибка загрузки данных:', error);
-            }
-        }
-
-        function updateDisplay() {
-            // Обновляем статистику
-            document.getElementById('statsLevel').textContent = userData.level;
-            document.getElementById('statsCoins').textContent = userData.coins;
-            document.getElementById('statsEnergy').textContent = `${userData.energy}/${userData.maxEnergy}`;
-            document.getElementById('statsStars').textContent = userData.stars;
-            
-            // Обновляем главную страницу
-            document.getElementById('homeWins').textContent = userData.stats.wins;
-            document.getElementById('homeLosses').textContent = userData.stats.losses;
-            document.getElementById('homeStreak').textContent = userData.stats.winStreak;
-            document.getElementById('homeArenaPoints').textContent = userData.arenaPoints;
-            
-            // Обновляем профиль
-            document.getElementById('profileName').textContent = userData.username;
-            document.getElementById('profileLevel').textContent = userData.level;
-            document.getElementById('profileExp').textContent = userData.experience;
-            document.getElementById('profileHealth').textContent = userData.hero.health;
-            document.getElementById('profileAttack').textContent = userData.hero.attack;
-            document.getElementById('profileDefense').textContent = userData.hero.defense;
-            document.getElementById('profileSpeed').textContent = userData.hero.speed;
-            document.getElementById('profileTickets').textContent = userData.inventory.tickets;
-            document.getElementById('profileClass').textContent = getClassName(userData.hero.class);
-            document.getElementById('profileAvatar').textContent = getClassEmoji(userData.hero.class);
-            
-            // Обновляем рейтинг
-            document.getElementById('playerRankInfo').textContent = `${userData.arenaPoints} очков арены`;
-            
-            // Обновляем битвы
-            document.getElementById('battleTickets').textContent = userData.inventory.tickets;
-        }
-
-        function getClassName(className) {
-            const classes = {
-                'warrior': 'Воин',
-                'mage': 'Маг',
-                'archer': 'Лучник'
-            };
-            return classes[className] || className;
-        }
-
-        function getClassEmoji(className) {
-            const emojis = {
-                'warrior': '⚔️',
-                'mage': '🔮',
-                'archer': '🏹'
-            };
-            return emojis[className] || '👤';
-        }
-
-        function switchTab(tabName) {
-            // Скрываем все вкладки
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            // Убираем активный класс у всех кнопок
-            document.querySelectorAll('.tab-button').forEach(button => {
-                button.classList.remove('active');
-            });
-            
-            // Показываем выбранную вкладку
-            document.getElementById('tab-' + tabName).classList.add('active');
-            
-            // Активируем кнопку
-            event.currentTarget.classList.add('active');
-            
-            // Обновляем заголовок
-            const titles = {
-                'home': 'Главное меню',
-                'battle': 'Выбор боя', 
-                'arena': 'Арена',
-                'shop': 'Магазин',
-                'ranking': 'Рейтинг',
-                'profile': 'Профиль'
-            };
-            document.getElementById('currentTabTitle').textContent = titles[tabName];
-        }
-
-        async function startQuickBattle() {
-            await startBotBattle('easy');
-        }
-
-        async function startBotBattle(difficulty) {
-            try {
-                // Проверяем энергию
-                if (userData.energy < 1) {
-                    showNotification('❌ Недостаточно энергии!');
-                    return;
-                }
-
-                // Создаем бой
-                currentBattle = {
-                    id: Date.now(),
-                    player1: userId,
-                    player2: 'bot',
-                    difficulty: difficulty,
-                    status: 'active',
-                    rounds: [],
-                    currentRound: 1,
-                    player1HP: 100,
-                    player2HP: 100,
-                    player1Energy: 3,
-                    player2Energy: 3
-                };
-
-                // Обновляем интерфейс арены
-                document.getElementById('playerName').textContent = userData.username;
-                document.getElementById('playerAvatar').textContent = getClassEmoji(userData.hero.class);
-                document.getElementById('enemyName').textContent = getBotName(difficulty);
-                document.getElementById('enemyAvatar').textContent = getBotEmoji(difficulty);
-                
-                updateBattleInterface();
-                switchTab('arena');
-                
-                // Вычитаем энергию
-                userData.energy -= 1;
-                updateDisplay();
-                
-                addBattleLog('⚔️ Бой начался! Противник: ' + getBotName(difficulty));
-                
-            } catch (error) {
-                console.error('Ошибка начала боя:', error);
-                showNotification('❌ Ошибка начала боя');
-            }
-        }
-
-        function getBotName(difficulty) {
-            const names = {
-                'easy': 'Новичок Бот',
-                'medium': 'Опытный Бот', 
-                'hard': 'Мастер Бот'
-            };
-            return names[difficulty] || 'Бот';
-        }
-
-        function getBotEmoji(difficulty) {
-            const emojis = {
-                'easy': '🤖',
-                'medium': '👾',
-                'hard': '😈'
-            };
-            return emojis[difficulty] || '🤖';
-        }
-
-        function updateBattleInterface() {
-            if (!currentBattle) return;
-            
-            // Обновляем HP
-            document.getElementById('playerHP').textContent = `${currentBattle.player1HP}/100`;
-            document.getElementById('enemyHP').textContent = `${currentBattle.player2HP}/100`;
-            document.getElementById('playerHealth').style.width = `${currentBattle.player1HP}%`;
-            document.getElementById('enemyHealth').style.width = `${currentBattle.player2HP}%`;
-            
-            // Обновляем энергию
-            updateEnergyDisplay('playerEnergy', currentBattle.player1Energy);
-            updateEnergyDisplay('enemyEnergy', currentBattle.player2Energy);
-            
-            // Обновляем раунд
-            document.getElementById('roundInfo').textContent = `РАУНД ${currentBattle.currentRound} ИЗ 3`;
-        }
-
-        function updateEnergyDisplay(elementId, energy) {
-            const container = document.getElementById(elementId);
-            container.innerHTML = '';
-            for (let i = 0; i < 3; i++) {
-                const point = document.createElement('div');
-                point.className = `energy-point ${i < energy ? '' : 'empty'}`;
-                container.appendChild(point);
-            }
-        }
-
-        async function makeMove(move) {
-            if (!currentBattle || currentBattle.status !== 'active') return;
-            
-            // Ход игрока
-            addBattleLog(`🎯 Вы используете: ${getMoveName(move)}`);
-            
-            // Имитация хода бота
-            const botMoves = ['attack', 'defend', 'special'];
-            const botMove = botMoves[Math.floor(Math.random() * botMoves.length)];
-            
-            // Вычисляем урон
-            const playerDamage = calculateDamage(move, botMove, true);
-            const botDamage = calculateDamage(botMove, move, false);
-            
-            // Применяем урон
-            currentBattle.player1HP = Math.max(0, currentBattle.player1HP - botDamage);
-            currentBattle.player2HP = Math.max(0, currentBattle.player2HP - playerDamage);
-            
-            // Логируем результаты
-            if (playerDamage > 0) {
-                addBattleLog(`💥 Вы наносите ${playerDamage} урона!`);
-                document.getElementById('enemyAvatar').classList.add('damage-animation');
-                setTimeout(() => document.getElementById('enemyAvatar').classList.remove('damage-animation'), 300);
-            }
-            
-            if (botDamage > 0) {
-                addBattleLog(`💢 Противник наносит ${botDamage} урона!`);
-                document.getElementById('playerAvatar').classList.add('damage-animation');
-                setTimeout(() => document.getElementById('playerAvatar').classList.remove('damage-animation'), 300);
-            }
-            
-            // Обновляем интерфейс
-            updateBattleInterface();
-            
-            // Проверяем конец боя
-            if (currentBattle.player1HP <= 0 || currentBattle.player2HP <= 0 || currentBattle.currentRound >= 3) {
-                await finishBattle();
-            } else {
-                currentBattle.currentRound++;
-                updateBattleInterface();
-                addBattleLog(`🔁 Начинается раунд ${currentBattle.currentRound}`);
-            }
-        }
-
-        function calculateDamage(attackMove, defenseMove, isPlayer) {
-            let damage = 0;
-            const baseDamage = isPlayer ? 20 : 15;
-            
-            if (attackMove === 'attack') {
-                damage = defenseMove === 'defend' ? baseDamage * 0.3 : baseDamage;
-            } else if (attackMove === 'special') {
-                damage = defenseMove === 'defend' ? baseDamage * 0.5 : baseDamage * 1.5;
-                // Тратим энергию
-                if (isPlayer) {
-                    currentBattle.player1Energy = Math.max(0, currentBattle.player1Energy - 1);
-                } else {
-                    currentBattle.player2Energy = Math.max(0, currentBattle.player2Energy - 1);
-                }
-            }
-            
-            // Добавляем случайность
-            damage += Math.floor(Math.random() * 10) - 2;
-            return Math.max(0, Math.floor(damage));
-        }
-
-        function getMoveName(move) {
-            const names = {
-                'attack': 'Атака',
-                'defend': 'Защита',
-                'special': 'Супер-удар'
-            };
-            return names[move] || move;
-        }
-
-        function addBattleLog(message) {
-            const log = document.getElementById('battleLog');
-            const entry = document.createElement('div');
-            entry.textContent = message;
-            entry.style.marginBottom = '5px';
-            log.appendChild(entry);
-            log.scrollTop = log.scrollHeight;
-        }
-
-        async function finishBattle() {
-            if (!currentBattle) return;
-            
-            const isWin = currentBattle.player2HP <= 0;
-            currentBattle.status = 'finished';
-            
-            // Начисляем награды
-            const rewards = {
-                coins: isWin ? 50 : 20,
-                experience: isWin ? 25 : 10,
-                arenaPoints: isWin ? 15 : 5
-            };
-            
-            userData.coins += rewards.coins;
-            userData.experience += rewards.experience;
-            userData.arenaPoints += rewards.arenaPoints;
-            userData.stats.battles += 1;
-            
-            if (isWin) {
-                userData.stats.wins += 1;
-                userData.stats.winStreak += 1;
-                addBattleLog('🎉 ПОБЕДА! Вы победили в бою!');
-            } else {
-                userData.stats.losses += 1;
-                userData.stats.winStreak = 0;
-                addBattleLog('💀 ПОРАЖЕНИЕ! Вы проиграли бой.');
-            }
-            
-            // Проверяем уровень
-            if (userData.experience >= userData.level * 100) {
-                userData.level += 1;
-                userData.experience = 0;
-                userData.coins += userData.level * 50;
-                addBattleLog(`🎊 Уровень повышен! Теперь вы уровня ${userData.level}`);
-            }
-            
-            updateDisplay();
-            
-            // Показываем результаты
-            setTimeout(() => showBattleResult(isWin, rewards), 1000);
-        }
-
-        function showBattleResult(isWin, rewards) {
-            const modal = document.getElementById('battleResultModal');
-            const content = document.getElementById('battleResultContent');
-            
-            content.innerHTML = `
-                <div class="${isWin ? 'victory-text' : 'defeat-text'}">
-                    ${isWin ? '🎉 ПОБЕДА!' : '💀 ПОРАЖЕНИЕ'}
-                </div>
-                <div style="margin: 15px 0;">
-                    <div style="display: flex; justify-content: space-around; margin-bottom: 10px;">
-                        <div>
-                            <div style="font-size: 12px; opacity: 0.8;">Монеты</div>
-                            <div style="font-size: 18px; font-weight: bold; color: gold;">+${rewards.coins}</div>
-                        </div>
-                        <div>
-                            <div style="font-size: 12px; opacity: 0.8;">Опыт</div>
-                            <div style="font-size: 18px; font-weight: bold; color: #10b981;">+${rewards.experience}</div>
-                        </div>
-                        <div>
-                            <div style="font-size: 12px; opacity: 0.8;">Очки арены</div>
-                            <div style="font-size: 18px; font-weight: bold; color: var(--accent-secondary);">+${rewards.arenaPoints}</div>
-                        </div>
-                    </div>
-                </div>
-                <div style="font-size: 12px; opacity: 0.8;">
-                    ${isWin ? 'Отличная работа! Продолжайте в том же духе!' : 'Не отчаивайтесь! У вас всё получится!'}
-                </div>
-            `;
-            
-            modal.style.display = 'block';
-        }
-
-        function closeBattleResult() {
-            document.getElementById('battleResultModal').style.display = 'none';
-            switchTab('home');
-        }
-
-        function surrenderBattle() {
-            if (confirm('Вы уверены, что хотите сдаться?')) {
-                addBattleLog('🏳️ Вы сдались в бою');
-                finishBattle();
-            }
-        }
-
-        function findPlayerBattle() {
-            showNotification('🔍 Поиск противника...');
-        }
-
-        function challengeFriend() {
-            showNotification('👋 Функция вызова друга скоро будет доступна!');
-        }
-
-        function buyTickets() {
-            if (userData.stars >= 10) {
-                userData.stars -= 10;
-                userData.inventory.tickets += 5;
-                updateDisplay();
-                showNotification('🎫 Куплено 5 билетов за 10 ⭐');
-            } else {
-                showNotification('❌ Недостаточно Stars для покупки');
-            }
-        }
-
-        function buyItem(item) {
-            showNotification(`🛍️ Покупка "${item}" скоро будет доступна!`);
-        }
-
-        function changeHeroClass() {
-            showNotification('🛡️ Смена класса скоро будет доступна!');
-        }
-
-        function showAchievements() {
-            showNotification('🏆 Достижения скоро будут доступны!');
-        }
-
-        function showSettings() {
-            showNotification('⚙️ Настройки скоро будут доступны!');
-        }
-
-        function showNotification(message) {
-            // В реальном приложении можно использовать Telegram WebApp.showPopup
-            alert(message);
-        }
-
-        console.log('PixelArena инициализирована! Готов к битвам! ⚔️');
-    </script>
-</body>
-</html>
+                console.error('Ошибка за
